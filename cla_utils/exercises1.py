@@ -151,8 +151,8 @@ def ABiC(Ahat, xr, xi):
     C = Ahat.copy()
     np.fill_diagonal(C, 0)
     for i in range(m):
-        C[i,:][i+1:m] = -1 * Ahat[:,i][i+1:m]
-        B[:,i][i+1:m] = Ahat[i,:][i+1:m]
+        B[i,:][i+1:m] = Ahat[:,i][i+1:m]
+        C[:,i][i+1:m] = -1 * Ahat[i,:][i+1:m]
     zr = column_matvec(B, xr) - column_matvec(C, xi)
     zi = column_matvec(C, xr) + column_matvec(B, xi)
 
