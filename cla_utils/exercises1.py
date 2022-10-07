@@ -1,3 +1,4 @@
+from re import A
 import numpy as np
 import timeit
 import numpy.random as random
@@ -21,8 +22,13 @@ def basic_matvec(A, x):
 
     :return b: m-dimensional numpy array
     """
-
-    raise NotImplementedError
+    dim = np.shape(A)
+    m = dim[0]
+    b = np.zeros(m)
+    for i in range(m):
+        for j in range(dim[1]):
+            b[i] += A[i][j] * x[j]
+    return b
 
 
 def column_matvec(A, x):
@@ -39,8 +45,13 @@ def column_matvec(A, x):
 
     This should be implemented using a single loop over the entries of x
     """
+    dim = np.shape(A)
+    m = dim[0]
+    b = np.zeros(m, dtype='complex_')
+    for i in range(len(x)):
+        b += x[i] * A[:,i]
+    return b
 
-    raise NotImplementedError
 
 
 def timeable_basic_matvec():
@@ -92,11 +103,19 @@ def rank2(u1, u2, v1, v2):
     :param v1: n-dimensional numpy array
     :param v2: n-dimensional numpy array
     """
-
-    raise NotImplementedError
-
+    m = len(u1)
+    n = len(v1)
+    B = np.zeros((m, 2), dtype = 'complex_')
+    for i in range(m):
+        B[:,0][i] = u1[i]
+        B[:,1][i] = u2[i]
+    v1c = np.conjugate(v1)
+    v2c = np.conjugate(v2)
+    C = np.zeros((2, n), dtype = 'complex_')
+    for j in range(n):
+        C[0,:][j] = v1c[j]
+        C[1,:][j] = v2c[j]
     A = B.dot(C)
-
     return A
 
 
@@ -108,8 +127,11 @@ def rank1pert_inv(u, v):
     :param u: m-dimensional numpy array
     :param v: m-dimensional numpy array
     """
-
-    raise NotImplementedError
+    n = len(u)
+    I = np.identity(n, dtype = 'complex_')
+    V = np.outer(u, np.conjugate(v))
+    alpha = -1 / (1 + np.dot(u,np.conjugate(v)))
+    Ainv = I + alpha * V
 
     return Ainv
 
@@ -124,7 +146,14 @@ def ABiC(Ahat, xr, xi):
     :return zr: m-dimensional numpy arrays containing the real part of z.
     :return zi: m-dimensional numpy arrays containing the imaginary part of z.
     """
-
-    raise NotImplementedError
+    m = len(xr)
+    B = Ahat.copy()
+    C = Ahat.copy()
+    np.fill_diagonal(C, 0)
+    for i in range(m):
+        C[i,:][i+1:m] = -1 * Ahat[:,i][i+1:m]
+        B[:,i][i+1:m] = Ahat[i,:][i+1:m]
+    zr = column_matvec(B, xr) - column_matvec(C, xi)
+    zi = column_matvec(C, xr) + column_matvec(B, xi)
 
     return zr, zi
