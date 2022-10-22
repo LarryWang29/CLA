@@ -15,13 +15,18 @@ def orthog_cpts(v, Q):
     :return r: an m-dimensional numpy array containing the residual
     :return u: an n-dimensional numpy array containing the coefficients
     """
-
-    raise NotImplementedError
+    n = Q.shape[1]
+    u = np.zeros(n, dtype='complex_')
+    r = v
+    for i in range(n):
+        k = np.dot(v,Q[:,i])
+        u[i] = k
+        r = r - k*(Q[:,i])
 
     return r, u
 
 
-def solve_Q(Q, b):
+def solveQ(Q, b):
     """
     Given a unitary mxm matrix Q and a vector b, solve Qx=b for x.
 
@@ -31,7 +36,8 @@ def solve_Q(Q, b):
     :return x: m dimensional array containing the solution.
     """
 
-    raise NotImplementedError
+    Q_star = np.linalg.inv(Q)
+    x = Q_star.dot(b)
 
     return x
 
@@ -48,8 +54,8 @@ def orthog_proj(Q):
     :return P: an mxm-dimensional numpy array containing the projector
     """
 
-    raise NotImplementedError
-
+    Q_star = np.transpose(Q.conjugate())
+    P = Q @ Q_star
     return P
 
 
@@ -65,9 +71,14 @@ def orthog_space(V):
     orthonormal basis for the subspace orthogonal to U, for appropriate l.
     """
 
-    raise NotImplementedError
+    Q = np.linalg.qr(V)[0]
+    m, n = np.shape(V)
+    P = np.identity(np.shape(Q)[0])
+    k = np.shape(Q)[1]
+    P = P - Q @ np.transpose(Q.conjugate())
+    P = P[:,:(m-k)]
 
-    return Q
+    return P
 
 
 def GS_classical(A):
@@ -80,7 +91,18 @@ def GS_classical(A):
     :return R: nxn numpy array
     """
 
-    raise NotImplementedError
+    n = np.shape(A)[1]
+    R = np.zeros((n,n), dtype = 'complex_')
+    for j in range(n):
+        v = A[:,j]
+        
+        if j > 0:
+            R[0:j,j] = np.transpose(A[:,0:j].conjugate()) @ (A[:,j])
+            arr = A[:,0:j] @ R[0:j,j]
+            v = v - arr
+
+        R[j,j] = np.linalg.norm(v)
+        A[:,j] = v / R[j,j]
 
     return R
 
@@ -95,13 +117,23 @@ def GS_modified(A):
     :return R: nxn numpy array
     """
 
-    raise NotImplementedError
+    n = np.shape(A)[1]
+    R = np.zeros((n,n), dtype = 'complex_')
+    for j in range(n):
+        v = A[:,j]
+        R[j,j] = np.linalg.norm(v)
+        q = v / R[j,j]
+        A[:,j] = q
+
+        if j < n:
+           R[j,(j+1):n] = np.transpose(A[:,(j+1):n].conjugate()) @ (A[:,j])
+           A[:,(j+1):n] = A[:,(j+1):n] - np.dot(A[:,j][:,None], R[j,(j+1):n][None,:])
 
     return R
 
 
 def GS_modified_get_R(A, k):
-    """
+    """ 
     Given an mxn matrix A, with columns of A[:, 0:k] assumed orthonormal,
     return upper triangular nxn matrix R such that
     Ahat = A*R has the properties that
@@ -113,8 +145,13 @@ def GS_modified_get_R(A, k):
 
     :return R: nxn numpy array
     """
-
-    raise NotImplementedError
+    B = A.copy()
+    n = np.shape(A)[1]
+    R_original = GS_modified(B)
+    R = np.identity(n, dtype = 'complex_')
+    Rkk = R_original[k-1,k-1]
+    R[k-1,k:n] = R_original[k-1,k:n] / Rkk * (-1)
+    R[k-1,k-1] = (1 / (Rkk * 1.0))
 
     return R
 
