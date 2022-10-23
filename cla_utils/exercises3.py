@@ -15,11 +15,37 @@ def householder(A, kmax=None):
     triangular matrix
     """
 
+def householder(A, kmax=None):
+    """
+    Given a real mxn matrix A, find the reduction to upper triangular matrix R
+    using Householder transformations. The reduction should be done "in-place",
+    so that A is transformed to R.
+
+    :param A: an mxn-dimensional numpy array
+    :param kmax: an integer, the number of columns of A to reduce \
+    to upper triangular. If not present, will default to n.
+
+    :return R: an mxn-dimensional numpy array containing the upper \
+    triangular matrix
+    """
+
     m, n = A.shape
     if kmax is None:
         kmax = n
+    for k in range(n):
+        x = A[k:m,k]
+        if x[0] == 0:
+            sgn = 1.0
+        else:
+            sgn = np.sign(x[0])
+        e1 = np.zeros(n-k)
+        e1[0] = 1.0
+        vk = sgn * np.sqrt(np.dot(x,x)) * e1 + x
+        vk = vk / np.sqrt(np.dot(vk, vk))
+        A[k:m, k:n] = A[k:m, k:n] - 2.0 * np.outer(vk, np.dot(vk, A[k:m, k:n]))
+        print(A)
 
-    raise NotImplementedError
+    return A
 
 
 def solve_U(U, b):
