@@ -61,9 +61,8 @@ def householder_solve(A, b):
     right-hand side vectors x_1,x_2,...,x_k.
     """
 
-    raise NotImplementedError
 
-    return x
+    return b
 
 
 def householder_qr(A):
