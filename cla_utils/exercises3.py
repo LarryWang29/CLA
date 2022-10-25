@@ -44,6 +44,9 @@ def solve_U(U, b):
        the solution x_i
 
     """
+    if b.ndim == 1:
+        b = np.array([b])
+        b = np.transpose(b)
     m, k = np.shape(b)
     x = np.zeros((m,k))
     x[m-1,:] = b[m-1,:] / U[m-1][m-1]
@@ -101,7 +104,9 @@ def householder_ls(A, b):
 
     :return x: an n-dimensional numpy array
     """
-
-    raise NotImplementedError
-
+    m, n = np.shape(A)
+    Q, R = householder_qr(A)
+    R_hat, Q_hat = R[0:n,:], Q[:,0:n]
+    x = solve_U(R_hat, np.dot(np.transpose(np.conjugate(Q_hat)), b))
+    x = np.ndarray.flatten(x)
     return x
