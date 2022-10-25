@@ -1,3 +1,4 @@
+import mailcap
 import numpy as np
 
 def householder(A, kmax=None):
@@ -14,21 +15,20 @@ def householder(A, kmax=None):
     triangular matrix
     """
 
-    m, n = A.shape
+    m, n = np.shape(A)
     if kmax is None:
         kmax = n
-    for k in range(n):
+    for k in range(kmax):
         x = A[k:m,k]
         if x[0] == 0:
             sgn = 1.0
         else:
             sgn = np.sign(x[0])
-        e1 = np.zeros(n-k)
+        e1 = np.zeros(m-k)
         e1[0] = 1.0
-        vk = sgn * np.sqrt(np.dot(x,x)) * e1 + x
-        vk = vk / np.sqrt(np.dot(vk, vk))
+        vk = sgn * np.linalg.norm(x) * e1 + x
+        vk = vk / np.linalg.norm(vk)
         A[k:m, k:n] = A[k:m, k:n] - 2.0 * np.outer(vk, np.dot(vk, A[k:m, k:n]))
-        print(A)
 
     return A
 
@@ -44,8 +44,12 @@ def solve_U(U, b):
        the solution x_i
 
     """
-                     
-    raise NotImplementedError
+    m, k = np.shape(b)
+    x = np.zeros((m,k))
+    x[m-1,:] = b[m-1,:] / U[m-1][m-1]
+    for i in reversed(range(m-1)):
+        x[i,:] = (b[i,:] - np.dot(U[i][i+1:m], x[i+1:m,:])) / U[i][i]        
+    return x
 
 
 def householder_solve(A, b):
@@ -60,9 +64,11 @@ def householder_solve(A, b):
     :return x: an mxk-dimensional numpy array whose columns are the \
     right-hand side vectors x_1,x_2,...,x_k.
     """
-
-
-    return b
+    m = np.shape(A)[1]
+    A_hat = np.hstack((A,b))
+    R = householder(A_hat, m)
+    x = solve_U(R[:,0:m], R[:,m:])
+    return x
 
 
 def householder_qr(A):
@@ -76,7 +82,11 @@ def householder_qr(A):
     :return R: an mxn-dimensional numpy array
     """
 
-    raise NotImplementedError
+    m, n = np.shape(A)
+    I = np.identity(m)
+    A_hat = np.hstack((A, I))
+    A_star = householder(A_hat, n)
+    R, Q = A_star[:,0:n], np.transpose(np.conjugate((A_star[:,n:])))
 
     return Q, R
 
