@@ -1,7 +1,7 @@
 import mailcap
 import numpy as np
 
-def householder(A, kmax=None):
+def householder(A, kmax=None, swap=None, reduced_tol=None):
     """
     Given a real mxn matrix A, find the reduction to upper triangular matrix R
     using Householder transformations. The reduction should be done "in-place",
@@ -16,9 +16,18 @@ def householder(A, kmax=None):
     """
 
     m, n = np.shape(A)
+    Permutated_A = A.copy()
     if kmax is None:
         kmax = n
     for k in range(kmax):
+        if swap == True:
+            NormArray = np.linalg.norm(A[k:m,k:n], axis=0)
+            if reduced_tol != None:
+                if NormArray.all() < reduced_tol:
+                    break
+            k_star = np.argmax(NormArray)
+            A[:,[k, k+k_star]] = A[:, [k+k_star, k]]
+            Permutated_A[:,[k, k+k_star]] = Permutated_A[:, [k+k_star, k]]
         x = A[k:m,k]
         if x[0] == 0:
             sgn = 1.0
@@ -29,8 +38,11 @@ def householder(A, kmax=None):
         vk = sgn * np.linalg.norm(x) * e1 + x
         vk = vk / np.linalg.norm(vk)
         A[k:m, k:n] = A[k:m, k:n] - 2.0 * np.outer(vk, np.dot(vk, A[k:m, k:n]))
-
-    return A
+    
+    if swap:
+        return Permutated_A, A
+    else:
+        return A
 
 
 def solve_U(U, b):
