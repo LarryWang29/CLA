@@ -19,13 +19,16 @@ def householder(A, kmax=None, swap=None, reduced_tol=None):
     Permutated_A = A.copy()
     if kmax is None:
         kmax = n
+    NormArray = np.linalg.norm(A, axis=0)
     for k in range(kmax):
-        if swap == True:
-            NormArray = np.linalg.norm(A[k:m,k:n], axis=0)
-            if reduced_tol != None:
+        if swap:
+            if k != 0:
+                top_sq = np.square(A[k, k:n])
+                NormArray[k:n] = NormArray[k:n] - top_sq
+            if reduced_tol != None and reduced_tol > 0:
                 if NormArray.all() < reduced_tol:
                     break
-            k_star = np.argmax(NormArray)
+            k_star = np.argmax(NormArray[k:n])
             A[:,[k, k+k_star]] = A[:, [k+k_star, k]]
             Permutated_A[:,[k, k+k_star]] = Permutated_A[:, [k+k_star, k]]
         x = A[k:m,k]
