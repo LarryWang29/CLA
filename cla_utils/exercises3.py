@@ -25,9 +25,10 @@ def householder(A, kmax=None, swap=None, reduced_tol=None):
             if k != 0:
                 top_sq = np.square(A[k-1, k:])
                 NormArray[k:] = NormArray[k:] - top_sq
+                print(NormArray)
 
             if reduced_tol != None:
-                if (NormArray[k:] < reduced_tol).all():
+                if ((abs(NormArray[k:])) < reduced_tol ** 2).all():
                     return Permutated_A, A[:k,:]
 
             k_star = np.argmax(NormArray[k:])
