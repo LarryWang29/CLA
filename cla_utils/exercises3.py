@@ -16,19 +16,19 @@ def householder(A, kmax=None, swap=None, reduced_tol=None):
     """
 
     m, n = np.shape(A)
-    Permutated_A = A.copy()
+    Permutated_A = A.copy() # Create a copy of A that keeps track of permuations
     if kmax is None:
         kmax = n
     NormArray = np.square(np.linalg.norm(A, axis=0))
     for k in range(kmax):
         if swap:
             if k != 0:
-                top_sq = np.square(A[k-1, k:])
-                NormArray[k:] = NormArray[k:] - top_sq
+                top_sq = np.square(A[k-1, k:]) 
+                NormArray[k:] = NormArray[k:] - top_sq # Update NormArray
                 print(NormArray)
 
             if reduced_tol != None:
-                if ((abs(NormArray[k:])) < reduced_tol ** 2).all():
+                if ((abs(NormArray[k:])) < reduced_tol ** 2).all(): # Check if norms are smaller than tolerance
                     return Permutated_A, A[:k,:]
 
             k_star = np.argmax(NormArray[k:])

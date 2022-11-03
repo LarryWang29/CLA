@@ -5,11 +5,11 @@ import matplotlib.pyplot as plt
 A1 = np.loadtxt('A1.dat')
 
 
-m = 100
+m = 100 
 n = 50
 k = 20
 random.seed(392*m + 2332*n)
-A = random.randn(m, n)
+A = random.randn(m, n) # Initialise A
 Q, R = cla_utils.householder_qr(A)
 x = random.randint(1,m)
 zero_id = set(random.randint(1, m, x))
