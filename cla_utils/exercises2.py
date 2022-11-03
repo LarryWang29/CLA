@@ -118,7 +118,7 @@ def GS_modified(A):
     """
 
     n = np.shape(A)[1]
-    R = np.zeros((n,n), dtype = 'complex_')
+    R = np.zeros((n,n), dtype = A.dtype)
     for j in range(n):
         v = A[:,j]
         R[j,j] = np.linalg.norm(v)

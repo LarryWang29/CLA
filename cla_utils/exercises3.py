@@ -47,7 +47,8 @@ def householder(A, kmax=None, swap=None, reduced_tol=None):
         vk = sgn * np.linalg.norm(x) * e1 + x
         vk = vk / np.linalg.norm(vk)
         A[k:m, k:n] = A[k:m, k:n] - 2.0 * np.outer(vk, np.dot(vk, A[k:m, k:n]))
-    
+    if reduced_tol:
+        return Permutated_A, A[:n, :n]
     if swap:
         return Permutated_A, A
     else:
@@ -65,14 +66,17 @@ def solve_U(U, b):
        the solution x_i
 
     """
-    if b.ndim == 1:
+    k = b.ndim
+    if k == 1:
         b = np.array([b])
         b = np.transpose(b)
     m, k = np.shape(b)
     x = np.zeros((m,k))
     x[m-1,:] = b[m-1,:] / U[m-1][m-1]
     for i in reversed(range(m-1)):
-        x[i,:] = (b[i,:] - np.dot(U[i][i+1:m], x[i+1:m,:])) / U[i][i]        
+        x[i,:] = (b[i,:] - np.dot(U[i][i+1:m], x[i+1:m,:])) / U[i][i]
+    if k == 1:
+        x = np.ndarray.flatten(x)        
     return x
 
 
@@ -129,5 +133,4 @@ def householder_ls(A, b):
     Q, R = householder_qr(A)
     R_hat, Q_hat = R[0:n,:], Q[:,0:n]
     x = solve_U(R_hat, np.dot(np.transpose(np.conjugate(Q_hat)), b))
-    x = np.ndarray.flatten(x)
     return x
