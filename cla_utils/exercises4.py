@@ -10,7 +10,10 @@ def operator_2_norm(A):
     :return o2norm: the norm
     """
 
-    raise NotImplementedError
+    K = A.T @ A
+    v = np.linalg.eig(K)[0]
+    v.sort()
+    o2norm = np.sqrt(v[-1])
 
     return o2norm
 
@@ -23,7 +26,11 @@ def cond(A):
 
     :param ncond: the condition number
     """
-
-    raise NotImplementedError
+    K = A.T @ A
+    v = np.linalg.eig(K)[0]
+    v.sort()
+    A_cond = np.sqrt(v[-1]) 
+    A_invcon = np.sqrt(1 / v[0])
+    ncond = A_cond * A_invcon
 
     return ncond
