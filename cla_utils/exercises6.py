@@ -1,3 +1,4 @@
+import cla_utils
 import numpy as np
 
 
@@ -46,8 +47,18 @@ def solve_L(L, b):
        the solution x_i
 
     """
-
-    raise NotImplementedError
+    k = b.ndim
+    if k == 1:
+        b = np.array([b])
+        b = np.transpose(b)
+    m, k = np.shape(b)
+    x = np.zeros((m,k))
+    x[0,:] = b[0,:] / L[0][0]
+    for i in range(1,m):
+        x[i,:] = (b[i,:] - np.dot(L[i,0:i], x[0:i,:])) / L[i][i]
+    if k == 1:
+        x = np.ndarray.flatten(x)        
+    return x
 
 
 def inverse_LU(A):
@@ -59,5 +70,14 @@ def inverse_LU(A):
     :return Ainv: an mxm-dimensional numpy array.
 
     """
-                     
-    raise NotImplementedError
+    LU_inplace(A)
+    m = np.shape(A)[0]
+    L = np.eye(m)
+    i1 = np.tril_indices(m, k=-1)
+    L[i1] = A[i1]
+    U = np.triu(A)
+    B = np.eye(m)
+    y = cla_utils.solve_L(L, B)
+    x = cla_utils.solve_U(U, y)
+    return x
+
