@@ -9,7 +9,7 @@ def randomQ(m):
     
     :return Q: the mxm numpy array containing the orthogonal matrix.
     """
-    Q, R = linalg.qr(random.randn(m, m))
+    Q, R = np.linalg.qr(np.random.randn(m, m))
     return Q
 
 
@@ -22,8 +22,8 @@ def randomR(m):
     :return R: the mxm numpy array containing the upper triangular matrix.
     """
     
-    A = random.randn(m, m)
-    return numpy.triu(A)
+    A = np.random.randn(m, m)
+    return np.triu(A)
 
 
 def backward_stability_householder(m):
@@ -37,8 +37,10 @@ def backward_stability_householder(m):
     for k in range(20):
         Q1 = randomQ(m)
         R1 = randomR(m)
-
-        raise NotImplementedError
+        A = Q1 @ R1
+        Q2, R2 = np.linalg.qr(A)
+        A1 = Q2 @ R2
+        print(np.linalg.norm(Q1 - Q2), np.linalg.norm(R1 - R2), np.linalg.norm(A - A1))
 
 
 def back_stab_solve_U(m):
