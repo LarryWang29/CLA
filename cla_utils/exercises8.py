@@ -9,8 +9,12 @@ def Q1AQ1s(A):
 
     :return A1: an mxm numpy array
     """
-
-    raise NotImplementedError
+    m = np.shape(A)[0]
+    I = np.eye(m)
+    v = A[:,0]
+    Q1 = I - 2 * np.outer(v, np.conjugate(v)) / np.dot(v, np.conjugate(v))
+    A1 = Q1 @ A @ np.conjugate(Q1.T)
+    return A1
 
 
 def hessenberg(A):
@@ -21,7 +25,19 @@ def hessenberg(A):
     :param A: an mxm numpy array
     """
 
-    raise NotImplementedError
+    m = np.shape(A)[0]
+    for k in range(m-2):
+        x = A[k+1:,k]
+        if x[0] == 0:
+            sgn = 1.0
+        else:
+            sgn = np.sign(x[0])
+        e1 = np.zeros(m-k-1)
+        e1[0] = 1.0
+        vk = sgn * np.sqrt(np.inner(x,x)) * e1 + x
+        vk = vk / np.sqrt(np.inner(vk, vk))
+        A[k+1:, k:] = A[k+1:, k:] - 2.0 * np.outer(vk, np.dot(vk, A[k+1:, k:]))
+        A[:,k+1:] = A[:,k+1:] - 2.0 * np.outer(A[:,k+1:] @ vk, np.conjugate(vk))
 
 
 def hessenbergQ(A):
@@ -34,8 +50,22 @@ def hessenbergQ(A):
     
     :return Q: an mxm numpy array
     """
-
-    raise NotImplementedError
+    m = np.shape(A)[0]
+    Q = np.eye(m)
+    for k in range(m-2):
+        x = A[k+1:,k]
+        if x[0] == 0:
+            sgn = 1.0
+        else:
+            sgn = np.sign(x[0])
+        e1 = np.zeros(m-k-1)
+        e1[0] = 1.0
+        vk = sgn * np.sqrt(np.inner(x,x)) * e1 + x
+        vk = vk / np.sqrt(np.inner(vk, vk))
+        A[k+1:, k:] = A[k+1:, k:] - 2.0 * np.outer(vk, np.dot(vk, A[k+1:, k:]))
+        A[:,k+1:] = A[:,k+1:] - 2.0 * np.outer(A[:,k+1:] @ vk, np.conjugate(vk))
+        Q[k+1:, :] = Q[k+1:, :] - 2.0 * np.outer(vk, np.dot(vk, Q[k+1:, :]))
+    return Q.T
 
 def hessenberg_ev(H):
     """

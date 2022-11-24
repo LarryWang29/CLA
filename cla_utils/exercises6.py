@@ -33,7 +33,6 @@ def LU_inplace(A):
         Lk = A[(k+1):, k] / A[k][k]
         A[(k+1):, k:] = A[(k+1):, k:] - np.outer(Lk, A[k,k:m])
         A[(k+1):, k] = Lk
-    return A
 
 
 def solve_L(L, b):
