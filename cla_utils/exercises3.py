@@ -25,7 +25,6 @@ def householder(A, kmax=None, swap=None, reduced_tol=None):
             if k != 0:
                 top_sq = np.square(A[k-1, k:]) 
                 NormArray[k:] = NormArray[k:] - top_sq # Update NormArray
-                print(NormArray)
 
             if reduced_tol != None:
                 if ((abs(NormArray[k:])) < reduced_tol ** 2).all(): # Check if norms are smaller than tolerance
@@ -130,7 +129,8 @@ def householder_ls(A, b):
     :return x: an n-dimensional numpy array
     """
     m, n = np.shape(A)
-    Q, R = householder_qr(A)
-    R_hat, Q_hat = R[0:n,:], Q[:,0:n]
-    x = solve_U(R_hat, np.dot(np.transpose(np.conjugate(Q_hat)), b))
+    A_star = np.hstack((A, np.transpose(np.array([b]))))
+    A_star = householder(A_star)
+    R_hat, QB = A_star[0:n,:n], A_star[:n,-1]
+    x = solve_U(R_hat, QB)
     return x

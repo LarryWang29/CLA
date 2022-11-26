@@ -1,4 +1,6 @@
 import numpy as np
+import matplotlib.pyplot as plt
+from numpy import random
 
 def Q1AQ1s(A):
     """
@@ -99,3 +101,22 @@ def ev(A):
     V = Q @ V
     return V
 
+def Rayleigh(m, r):
+    random.seed(3213*m)
+    A1 = random.randn(m, m)
+    A = A1 @ A1.T
+    E = np.linalg.eig(A)
+    Lambda, v = E[0][0], E[1][0]
+    epsilon = []
+    for i in range(-10, 0):
+        epsilon.append(10 ** i)
+    error = []
+    for i in epsilon:
+        v_star = v + i * r
+        rayleigh_coeff = np.dot(v_star, (A @ v_star)) / np.dot(v_star, v_star)
+        error.append(np.abs(rayleigh_coeff - Lambda))
+    plt.loglog(epsilon, error)
+    plt.show()
+
+# r = np.ones(10)
+# Rayleigh(10, r)

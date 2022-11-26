@@ -125,9 +125,8 @@ def GS_modified(A):
         q = v / R[j,j]
         A[:,j] = q
 
-        if j < n:
-           R[j,(j+1):n] = np.transpose(A[:,(j+1):n].conjugate()) @ (A[:,j])
-           A[:,(j+1):n] = A[:,(j+1):n] - np.dot(A[:,j][:,None], R[j,(j+1):n][None,:])
+        R[j,(j+1):n] = np.transpose(A[:,(j+1):n].conjugate()) @ (A[:,j])
+        A[:,(j+1):n] = A[:,(j+1):n] - np.dot(A[:,j][:,None], R[j,(j+1):n][None,:])
 
     return R
 

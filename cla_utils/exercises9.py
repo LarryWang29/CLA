@@ -1,5 +1,6 @@
 import numpy as np
 import numpy.random as random
+import cla_utils
 
 def get_A100():
     """
@@ -101,9 +102,29 @@ def pow_it(A, x0, tol, maxit, store_iterations = False):
     the iterates.
     :return lambda0: the final eigenvalue.
     """
+    iter = 0
+    if store_iterations:
+        x = np.copy(x0)
+        x = x / np.sqrt(np.dot(x, x))
+    else:
+        x = x0 / np.sqrt(np.dot(x0, x0)) 
+    
+    while iter < maxit:
+        # prev = np.dot(x, A @ x)
+        w = A @ x
+        x = w / np.sqrt(np.dot(w, w))
+        if store_iterations:
+            x0 = np.vstack((x0, x))
+        lambda0 = np.dot(x, A @ x)
+        iter += 1
+        r = A @ x - lambda0 * x
+        if np.sqrt(np.inner(r, r)) < tol:
+            break
 
-    Raise(NotImplementedError)
-    return x, lambda0
+    if store_iterations:
+        return x0.T, lambda0
+    else:
+        return x, lambda0
 
 
 def inverse_it(A, x0, mu, tol, maxit, store_iterations = False):
@@ -129,7 +150,29 @@ def inverse_it(A, x0, mu, tol, maxit, store_iterations = False):
     all the iterates.
     """
 
-    raise NotImplementedError
+    x = x0
+    m = np.shape(A)[0]
+    iter = 0
+    if store_iterations:
+        x0 = np.array([x0])
+        x0 = np.transpose(x0)
+        lambda_list = []
+    while iter < maxit:
+        w = np.linalg.inv(A - mu * np.eye(m)) @ x
+        x = w / np.sqrt(np.dot(w, w))
+        l = np.dot(x, A @ x)
+        if store_iterations:
+            np.hstack((x0, x))
+            lambda_list.append(l)
+        iter += 1
+        r = A @ x - l * x
+        if np.linalg.norm(r) < tol:
+            break
+    
+    if store_iterations:
+        return x0, np.array(lambda_list)
+    else:
+        return x, l
 
 
 def rq_it(A, x0, tol, maxit, store_iterations = False):
@@ -153,8 +196,20 @@ def rq_it(A, x0, tol, maxit, store_iterations = False):
     estimate, or if store_iterations, an m dimensional numpy array containing \
     all the iterates.
     """
-
-    raise NotImplementedError
+    lambda0 = np.dot(x0, A @ x0)
+    m = np.shape(A)[0]
+    iter = 0
+    while iter < maxit:
+        w = np.linalg.inv(A - lambda0 * np.eye(m)) @ x0
+        x0 = w / np.sqrt(np.inner(w, w))
+        lambda0 = np.dot(x0, A @ x0)
+        r = A @ x0 - lambda0 * x0
+        iter += 1
+        if np.linalg.norm(r) < tol:
+            break
+    
+    print(iter)
+    return x0, lambda0
 
 
 def pure_QR(A, maxit, tol):
@@ -171,3 +226,5 @@ def pure_QR(A, maxit, tol):
     raise NotImplementedError
 
 
+# print(pow_it(get_A3(), np.ones(3), 0.001, 10000, True))
+# print(pow_it(get_B3(), np.ones(3), 0.001, 10000))
