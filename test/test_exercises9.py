@@ -18,11 +18,11 @@ def test_pow_it(m):
 @pytest.mark.parametrize('m', [20, 204, 18])
 def test_inverse_it(m):
     random.seed(1302*m)
-    A = random.randn(m, m) + 1j*random.randn(m, m)
+    A = random.randn(m, m) # . + 1j*random.randn(m, m)
     A = 0.5*(A + np.conj(A).T)
     e, _ = np.linalg.eig(A)
     x0 = random.randn(m)
-    mu = e[m//2] + random.randn() + 1j*random.randn()
+    mu = e[m//2] + random.randn() # + 1j*random.randn()
     xi, li = cla_utils.inverse_it(A, x0, mu, tol=1.0e-8, maxit=10000)
     es = np.abs(e - mu)
     i1 = np.argsort(es)

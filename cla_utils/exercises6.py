@@ -52,11 +52,11 @@ def solve_L(L, b):
         b = np.transpose(b)
     m, k = np.shape(b)
     x = np.zeros((m,k))
-    x[0,:] = b[0,:] / L[0][0]
+    x[0,:] = b[0,:] / L[0, 0]
     for i in range(1,m):
-        x[i,:] = (b[i,:] - np.dot(L[i,0:i], x[0:i,:])) / L[i][i]
+        x[i,:] = (b[i,:] - np.dot(L[i,0:i], x[0:i,:])) / L[i, i]
     if k == 1:
-        x = np.ndarray.flatten(x)        
+        return x[:,0] 
     return x
 
 

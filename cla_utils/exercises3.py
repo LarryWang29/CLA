@@ -70,7 +70,7 @@ def solve_U(U, b):
         b = np.array([b])
         b = np.transpose(b)
     m, k = np.shape(b)
-    x = np.zeros((m,k))
+    x = np.zeros((m,k), dtype=U.dtype)
     x[m-1,:] = b[m-1,:] / U[m-1][m-1]
     for i in reversed(range(m-1)):
         x[i,:] = (b[i,:] - np.dot(U[i][i+1:m], x[i+1:m,:])) / U[i][i]
@@ -92,6 +92,8 @@ def householder_solve(A, b):
     right-hand side vectors x_1,x_2,...,x_k.
     """
     m = np.shape(A)[1]
+    if b.ndim == 1:
+        b = np.transpose(np.array([b]))
     A_hat = np.hstack((A,b))
     R = householder(A_hat, m)
     x = solve_U(R[:,0:m], R[:,m:])

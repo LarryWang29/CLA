@@ -158,8 +158,13 @@ def inverse_it(A, x0, mu, tol, maxit, store_iterations = False):
         x0 = np.transpose(x0)
         lambda_list = []
     while iter < maxit:
-        w = np.linalg.inv(A - mu * np.eye(m)) @ x
+        B = A - mu * np.eye(m)
+        w = cla_utils.householder_solve(B, x)
+        # print(np.linalg.norm(x - (A - mu * np.eye(m)) @ w1))
+        # w = np.linalg.solve(A - mu * np.eye(m), x)
+        # print(np.linalg.norm(x - (A - mu * np.eye(m)) @ w1))
         x = w / np.sqrt(np.dot(w, w))
+        # print(np.linalg.norm(x))
         l = np.dot(x, A @ x)
         if store_iterations:
             np.hstack((x0, x))

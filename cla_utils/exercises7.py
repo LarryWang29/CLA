@@ -28,22 +28,21 @@ def LUP_inplace(A, p_count=False):
     """
     m = np.shape(A)[0]
     p = np.arange(0,m)
-    I = np.eye(m)
-    sign = 1
+    iter = 0
     for k in range(m-1):
         i = np.argmax(np.abs(A[k:,k])) + k
         p = perm(p, k, i)
         if p_count:
             if i != k:
-                sign = sign * (-1)
+                iter += 1
         A[[k, i]] = A[[i, k]]
         Lk = A[(k+1):, k] / A[k][k]
-        A[(k+1):, k:] = A[(k+1):, k:] - np.outer(Lk, A[k,k:m])
+        A[(k+1):, k:] -= np.outer(Lk, A[k,k:m])
         A[(k+1):, k] = Lk
+    sign = (-1) ** iter
     if p_count:
         return p, sign
-    else:
-        return p
+    return p
 
 
 def solve_LUP(A, b):
@@ -75,7 +74,6 @@ def det_LUP(A):
     :return detA: floating point number, the determinant.
     """
     m = np.shape(A)[0]
-    p, sign = LUP_inplace(A, p_count=True)
-    for i in range(m):
-        sign *= A[i][i]
+    sign = LUP_inplace(A, p_count=True)[1]
+    sign *= A.diagonal().prod()
     return sign
