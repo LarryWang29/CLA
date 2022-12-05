@@ -68,7 +68,7 @@ def solve_L(L, b, bl=None):
     return x
 
 
-def inverse_LU(A):
+def inverse_LU(A, bl=None, bu=None):
     """
     Form the inverse of A via LU factorisation.
 
@@ -77,7 +77,7 @@ def inverse_LU(A):
     :return Ainv: an mxm-dimensional numpy array.
 
     """
-    LU_inplace(A)
+    LU_inplace(A, bl, bu)
     m = np.shape(A)[0]
     L = np.eye(m)
     i1 = np.tril_indices(m, k=-1)
