@@ -22,8 +22,9 @@ L[i1] = A60[i1]
 U = np.triu(A60)
 print(np.linalg.norm(B - L @ U) / np.linalg.norm(B))
 
-random.seed(923*n)
+random.seed(12984*n)
 x = random.randn(n)
 y = B @ x
-x1 = cla_utils.solve_LUP(B, y)
-print(np.linalg.norm(x1-x))
+B1 = np.copy(B)
+x1 = cla_utils.solve_LUP(B1, y)
+print(np.linalg.norm(B @ x1 - y) / np.linalg.norm(B @ x1))
