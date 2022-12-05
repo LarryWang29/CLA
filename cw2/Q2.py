@@ -1,6 +1,8 @@
 import numpy as np
 import cla_utils
 import time
+import matplotlib.pyplot as plt
+
 A2 = np.loadtxt('A2.dat')
 
 def MGS_solve_ls(A, b):
@@ -30,9 +32,9 @@ def Get_ls_Error(A):
     """
     N = np.shape(A)[1]
     Error, Error1 = [], []
-    for i in range(10):
-        a = int(time.time())
-        np.random.seed(a)
+    for i in range(50):
+        # a = int(time.time())
+        # np.random.seed(a)
         x_star = np.random.random(N)
         b = A @ x_star
         A1 = np.copy(A)
@@ -58,9 +60,36 @@ def MGS_solve_ls_modified(A, b):
     right-hand side vectors x_1,x_2,...,x_k.
     """
     n = np.shape(A)[1]
-    A_hat = np.hstack([A, b]) # Create the Augmented matrix
+    A_hat = np.column_stack((A, b)) # Create the Augmented matrix  
     R = cla_utils.GS_modified(A_hat)
-    R_hat, Q_hat, q, rho = R[:n, :n], A[:,:n], A[:,-1], R[-1,-1]
-    z = np.conj(Q_hat.T) @ q * rho / np.dot(q,q)
+    z = R[:n,-1]
+    R_hat = R[:n, :n]
     x = cla_utils.solve_U(R_hat, z)
     return x
+
+def Modified_error(A):
+    N = np.shape(A)[1]
+    Error = []
+    for i in range(50):
+        # a = int(time.time())
+        # np.random.seed(a)
+        x_star = np.random.random(N)
+        b = A @ x_star
+        A1 = np.copy(A)
+        x_hat = MGS_solve_ls_modified(A1, b)
+        Error.append(np.sqrt(np.inner(x_star - x_hat, x_star - x_hat)))
+    return Error
+
+def Compare_Error(A):
+    x_arr = np.linspace(1, 51, 50)
+    Unmodified = Get_ls_Error(A)[0]
+    Modified = Modified_error(A)
+    print(Unmodified, Modified)
+    plt.plot(x_arr, np.log(Unmodified), label='MGS without augmented A')
+    plt.plot(x_arr, np.log(Modified), label='MGS with augmented A')
+    plt.xlabel("Number of iteration")
+    plt.ylabel("Log of the error")
+    plt.legend(loc="center")
+    plt.show()
+
+Compare_Error(A2)

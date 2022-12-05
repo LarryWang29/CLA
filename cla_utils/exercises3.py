@@ -75,7 +75,7 @@ def solve_U(U, b):
     for i in reversed(range(m-1)):
         x[i,:] = (b[i,:] - np.dot(U[i][i+1:m], x[i+1:m,:])) / U[i][i]
     if k == 1:
-        x = np.ndarray.flatten(x)        
+        return x[:,0] 
     return x
 
 
