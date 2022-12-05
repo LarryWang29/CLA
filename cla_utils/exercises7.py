@@ -76,3 +76,22 @@ def det_LUP(A):
     sign = LUP_inplace(A, p_count=True)[1]
     sign *= A.diagonal().prod()
     return sign
+
+def solve_LU(A, b, bl=None, bu=None):
+    """
+    Solve Ax=b using LU factorisation.
+
+    :param A: an mxm-dimensional numpy array
+    :param b: an m-dimensional numpy array
+
+    :return x: an m-dimensional numpy array
+    """
+    m = np.shape(A)[0]
+    cla_utils.LU_inplace(A, bl, bu)
+    i1 = np.tril_indices(m, k=-1)
+    L = np.eye(m)
+    L[i1] = A[i1]
+    U = np.triu(A)
+    Ux = cla_utils.solve_L(L, b, bl)
+    x = cla_utils.solve_U(U, Ux, bu)
+    return x

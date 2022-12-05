@@ -18,7 +18,7 @@ def get_Lk(m, lvec):
     return Lk
 
 
-def LU_inplace(A):
+def LU_inplace(A, bl=None, bu=None):
     """Compute the LU factorisation of A, using the in-place scheme so
     that the strictly lower triangular components of the array contain
     the strictly lower triangular components of L, and the upper
@@ -30,12 +30,17 @@ def LU_inplace(A):
     """
     m = np.shape(A)[0]
     for k in range(m-1):
-        Lk = A[(k+1):, k] / A[k][k]
-        A[(k+1):, k:] = A[(k+1):, k:] - np.outer(Lk, A[k,k:m])
-        A[(k+1):, k] = Lk
+        m1, m2 = m, m
+        if bl:
+            m1 = min(k+bl, m)
+        Lk = A[(k+1):m1, k] / A[k][k]
+        if bu:
+            m2 = min(k+bu, m)
+        A[(k+1):m1, k:m2] = A[(k+1):m1, k:m2] - np.outer(Lk, A[k,k:m2])
+        A[(k+1):m1, k] = Lk
 
 
-def solve_L(L, b):
+def solve_L(L, b, bl=None):
     """
     Solve systems Lx_i=b_i for x_i with L lower triangular, i=1,2,...,k
 
@@ -54,7 +59,10 @@ def solve_L(L, b):
     x = np.zeros((m,k))
     x[0,:] = b[0,:] / L[0, 0]
     for i in range(1,m):
-        x[i,:] = (b[i,:] - np.dot(L[i,0:i], x[0:i,:])) / L[i, i]
+        j = 0
+        if bl:
+            j = max(0, k-bl-1)
+        x[i,:] = (b[i,:] - np.dot(L[i,j:i], x[j:i,:])) / L[i, i]
     if k == 1:
         return x[:,0] 
     return x

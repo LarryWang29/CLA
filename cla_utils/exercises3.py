@@ -54,7 +54,7 @@ def householder(A, kmax=None, swap=None, reduced_tol=None):
         return A
 
 
-def solve_U(U, b):
+def solve_U(U, b, bu=None):
     """
     Solve systems Ux_i=b_i for x_i with U upper triangular, i=1,2,...,k
 
@@ -73,7 +73,10 @@ def solve_U(U, b):
     x = np.zeros((m,k), dtype=U.dtype)
     x[m-1,:] = b[m-1,:] / U[m-1][m-1]
     for i in reversed(range(m-1)):
-        x[i,:] = (b[i,:] - np.dot(U[i][i+1:m], x[i+1:m,:])) / U[i][i]
+        j = m
+        if bu:
+            j = min(i+bu, m)
+        x[i,:] = (b[i,:] - np.dot(U[i,i+1:j], x[i+1:j,:])) / U[i][i]
     if k == 1:
         return x[:,0] 
     return x
