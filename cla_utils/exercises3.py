@@ -130,7 +130,7 @@ def householder_ls(A, b):
 
     :return x: an n-dimensional numpy array
     """
-    m, n = np.shape(A)
+    n = np.shape(A)[1]
     A_star = np.hstack((A, np.transpose(np.array([b]))))
     A_star = householder(A_star)
     R_hat, QB = A_star[0:n,:n], A_star[:n,-1]

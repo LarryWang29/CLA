@@ -1,5 +1,6 @@
 import numpy as np
-
+import cla_utils
+from numpy import random
 
 def randomQ(m):
     """
@@ -52,10 +53,11 @@ def back_stab_solve_U(m):
     """
     # repeat the experiment a few times to capture typical behaviour
     for k in range(20):
-        A = random.randn(m, m)
-        R = np.triu(A)
-
-        raise NotImplementedError
+        R = randomR(m)
+        b = random.randn(m)
+        x = R @ b
+        x1 = cla_utils.solve_U(R,x)
+        print(np.linalg.norm(x1-b))
 
 
 def back_stab_householder_solve(m):
@@ -65,4 +67,12 @@ def back_stab_householder_solve(m):
 
     :param m: the matrix dimension parameter.
     """
-    raise NotImplementedError
+    for k in range(20):
+        A = random.randn(m ,m)
+        x = random.randn(m)
+        b = A @ x
+        x1 = cla_utils.householder_solve(A, b)
+        print(np.linalg.norm(x1-x))
+
+
+# back_stab_householder_solve(50)

@@ -73,7 +73,6 @@ def det_LUP(A):
 
     :return detA: floating point number, the determinant.
     """
-    m = np.shape(A)[0]
     sign = LUP_inplace(A, p_count=True)[1]
     sign *= A.diagonal().prod()
     return sign
