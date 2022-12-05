@@ -92,4 +92,30 @@ def Compare_Error(A):
     plt.legend(loc="center")
     plt.show()
 
-Compare_Error(A2)
+# Compare_Error(A2)
+
+def Outrange_Error(m,n):
+    Error, Error1 = [], []
+    for i in range(1, 51):
+        # Use time as seed so that different values are generated each time
+        np.random.seed(int(time.time()) + i)
+        A = np.random.randn(m,n)
+        x = np.random.randn(n)
+        # Change the seed so that r isn't equal to x
+        np.random.seed(int(time.time()) + 100 + i)
+        r = np.random.randn()
+        b = A @ x + r
+        A1 = A.copy()
+        x_hat = MGS_solve_ls_modified(A1, b)
+        x_hat1 = MGS_solve_ls(A1, b)
+        Error.append(np.sqrt(np.inner(x - x_hat, x - x_hat)))
+        Error1.append(np.sqrt(np.inner(x - x_hat1, x - x_hat1)))
+    x_arr = np.linspace(1, 51, 50)
+    Error_arr = np.array(Error1) - np.array(Error)
+    plt.plot(x_arr, Error_arr, label='Difference in error between the two methods')
+    plt.xlabel("Number of iteration")
+    plt.ylabel("Difference of error")
+    plt.legend(loc="upper center")
+    plt.show()
+
+Outrange_Error(100, 20)
