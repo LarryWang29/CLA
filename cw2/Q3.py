@@ -30,8 +30,8 @@ def sim(N, s, option):
     elif option=='Original':
         u_hat = cla_utils.solve_LU(D, w)
     u = np.reshape(u_hat, (N, N))
-    c = plt.imshow(u, cmap='hot')
+    c = plt.imshow(u, cmap='hot', vmin=-4, vmax=4)
     plt.colorbar(c)
     plt.show()
 
-sim(50, 0.5, 'Banded')
+sim(50, 1, 'Banded')
