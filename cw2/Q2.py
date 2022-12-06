@@ -98,7 +98,7 @@ def Outrange_Error(m,n):
     Error, Error1 = [], []
     for i in range(1, 51):
         # Use time as seed so that different values are generated each time
-        np.random.seed(int(time.time()) + i)
+        # np.random.seed(int(time.time()) + i)
         A = np.random.randn(m,n)
         x = np.random.randn(n)
         # Change the seed so that r isn't equal to x

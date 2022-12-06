@@ -75,7 +75,7 @@ def solve_U(U, b, bu=None):
     for i in reversed(range(m-1)):
         j = m
         if bu:
-            j = min(i+bu, m)
+            j = min(i+bu+1, m)
         x[i,:] = (b[i,:] - np.dot(U[i,i+1:j], x[i+1:j,:])) / U[i][i]
     if k == 1:
         return x[:,0] 

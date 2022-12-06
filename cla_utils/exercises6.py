@@ -32,10 +32,10 @@ def LU_inplace(A, bl=None, bu=None):
     for k in range(m-1):
         m1, m2 = m, m
         if bl:
-            m1 = min(k+bl, m)
+            m1 = min(k+bl+1, m)
         Lk = A[(k+1):m1, k] / A[k][k]
         if bu:
-            m2 = min(k+bu, m)
+            m2 = min(k+bu+1, m)
         A[(k+1):m1, k:m2] = A[(k+1):m1, k:m2] - np.outer(Lk, A[k,k:m2])
         A[(k+1):m1, k] = Lk
 

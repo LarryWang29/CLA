@@ -7,12 +7,10 @@ import pytest
 def test_LU_inplace(m):
     random.seed(481*m)
     A = random.randn(m, m)
-    n, p = random.randint(1, m-1, size=2)
-    i1 = np.tril_indices(m, k=-n)
+    n, p = random.randint(1, m-2, size=2)
+    A = np.tril(A, p)
     # Setting entries outside of bandwith to 0
-    A[i1] = 0
-    u1 = np.triu_indices(m, k=p)
-    A[u1] = 0
+    A = np.triu(A, -n)
     A0 = 1.0*A
     cla_utils.LU_inplace(A, n, p)
     L = np.eye(m)
@@ -29,10 +27,9 @@ def test_solve_L_banded(m):
     A = random.randn(m, m)
     B = np.tril(A)
     # Randomly select a bandwidth
-    n = random.randint(1, m-1)
-    i1 = np.tril_indices(m, k=-n)
+    n = random.randint(1, m-2)
     # Setting entries outside of bandwith to 0
-    B[i1] = 0
+    B = np.triu(B, -n)
     x = random.randn(m)
     b = B @ x
     B1 = np.copy(B)
@@ -49,10 +46,9 @@ def test_solve_U_banded(m):
     A = random.randn(m, m)
     B = np.triu(A)
     # Randomly select a bandwidth
-    n = random.randint(1, m-1)
-    u1 = np.triu_indices(m, k=n)
+    n = random.randint(1, m-2)
     # Setting entries outside of bandwith to 0
-    B[u1] = 0
+    B = np.tril(B, n)
     x = random.randn(m)
     b = B @ x
     B1 = np.copy(B)
@@ -69,10 +65,9 @@ def test_LU_solve_lower_banded(m):
     random.seed(5254*m)
     A = random.randn(m, m)
     # Randomly select a bandwidth
-    n = random.randint(1, m-1)
-    i1 = np.tril_indices(m, k=-n)
+    n = random.randint(1, m-2)
+    A = np.triu(A, -n)
     # Setting entries outside of bandwith to 0
-    A[i1] = 0
     x = random.randn(m)
     b = A @ x
     A1 = np.copy(A)
@@ -88,10 +83,9 @@ def test_LU_solve_upper_banded(m):
     random.seed(1254*m)
     A = random.randn(m, m)
     # Randomly select a bandwidth
-    n = random.randint(1, m-1)
-    i1 = np.triu_indices(m, k=n)
+    n = random.randint(1, m-2)
+    A = np.tril(A, n)
     # Setting entries outside of bandwith to 0
-    A[i1] = 0
     x = random.randn(m)
     b = A @ x
     A1 = np.copy(A)
@@ -108,12 +102,10 @@ def test_LU_solve_doubly_banded(m):
     random.seed(84124*m)
     A = random.randn(m, m)
     # Randomly generates 2 bandwidths
-    n, p = random.randint(1, m-1, size=2)
-    i1 = np.tril_indices(m, k=-n)
+    n, p = random.randint(1, m-2, size=2)
+    A = np.triu(A, -n)
     # Setting entries outside of bandwith to 0
-    A[i1] = 0
-    u1 = np.triu_indices(m, k=p)
-    A[u1] = 0
+    A = np.tril(A, p)
     x = random.randn(m)
     b = A @ x
     A1 = np.copy(A)
