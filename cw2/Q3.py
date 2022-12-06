@@ -64,7 +64,6 @@ def iterative_solver(N, s, rho, v, tol):
     """
     Iteratively computes the solution u_hat for the system
     """
-    np.random.seed(int(time.time()))
     s2 = s ** 2
     N2 = N ** 2
     w = np.random.randn(N2)
@@ -80,7 +79,7 @@ def iterative_solver(N, s, rho, v, tol):
         A2[i*N, N+1] = 0
     A3 = -A2 + (1+rho+v) * np.eye(N2)
     A4 = -A1 + (1+rho+v) * np.eye(N2)
-    iter = 0
+    iter1 = 0
     # Keep track of the permutation
     perm = np.arange(N2)
     # Permute the indices based on mod(N)
@@ -88,12 +87,14 @@ def iterative_solver(N, s, rho, v, tol):
     inv_perm = np.empty(N2, dtype=np.int32)
     for i in np.arange(N2):
         inv_perm[perm[i]] = i
-    while np.linalg.norm(D @ u_hat - w) > tol * np.linalg.norm(w) and iter <= 10000:
+    while np.linalg.norm(D @ u_hat - w) > tol * np.linalg.norm(w):
         v1 = matvec_prod_banded(A2, u_hat, 1) + w
-        v1 = [v1[i] for i in perm]
-        u_hat_star = cla_utils.solve_LU(A1, v1, 1, 1)
+        v1 = v1[perm]
+        u_hat_star = np.linalg.solve(A1, v1)
         v2 = matvec_prod_banded(A4, u_hat_star, 1)
-        v2 = [v2[i] for i in inv_perm] + w
-        u_hat = cla_utils.solve_LU(A3, v2, 1, 1) 
-        iter += 1
-    return u_hat
+        v2 = v2[inv_perm] + w
+        u_hat = np.linalg.solve(A3, v2) 
+        iter1 += 1
+    return u_hat, iter1
+
+print(iterative_solver(50, 1, 1, 1, 1e-6))
