@@ -1,5 +1,4 @@
 import pytest
-import cla_utils
 from numpy import random
 import numpy as np
 from cw2 import Q2

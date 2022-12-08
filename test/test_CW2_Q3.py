@@ -2,7 +2,6 @@ import numpy as np
 from numpy import random
 import cla_utils
 import pytest
-from cw2 import Q3
 
 @pytest.mark.parametrize('m', [20, 204, 18])
 def test_LU_inplace(m):
@@ -70,4 +69,4 @@ def test_LU_solve_doubly_banded(m):
     A1 = np.copy(A)
     x1 = cla_utils.solve_LU(A1, b, n, p)
     #check normal equation residual
-    assert(np.sqrt(np.inner(x1-x, x1-x))) < 1.0e-6
+    assert(np.linalg.norm(x1-x)) < 1.0e-6

@@ -47,6 +47,8 @@ def solve_L(L, b, bl=None):
     :param L: an mxm-dimensional numpy array, assumed lower triangular
     :param b: an mxk-dimensional numpy array, with ith column containing 
        b_i
+    :param bl: the lower bandwidth of the matrix
+    
     :return x: an mxk-dimensional numpy array, with ith column containing 
        the solution x_i
 

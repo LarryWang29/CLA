@@ -61,6 +61,8 @@ def solve_U(U, b, bu=None):
     :param U: an mxm-dimensional numpy array, assumed upper triangular
     :param b: an mxk-dimensional numpy array, with ith column containing 
        b_i
+    :param bu: the upper bandwidth of the matrix
+
     :return x: an mxk-dimensional numpy array, with ith column containing 
        the solution x_i
 

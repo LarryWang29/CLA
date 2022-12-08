@@ -122,6 +122,7 @@ def iterative_solver(N, s, rho, v, tol, test=False):
     # Generate the inverse permutation
     for i in np.arange(N2):
         inv_perm[perm[i]] = i
+    # Check stopping condition and impose max interation count
     while np.linalg.norm(D @ u_hat - w) > tol * np.linalg.norm(w) and iter1 <= 1000:
         u_hat_star = np.zeros(N2)
         v1 = np.zeros(N2)
