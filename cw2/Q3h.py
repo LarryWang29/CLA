@@ -32,8 +32,10 @@ fig = plt.figure(figsize=(10, 5))
 
 # ax1 = plt.subplot(1, 2, 1)
 Y1 = fix_nu(nu[0])
+# Iterate through all N
 for k in range(LN):
     Ni = N[k]
+    # Plots how iteration number changes when we fix N and very rho
     plt.plot(rho, Y1[k], label = "N = {}".format(Ni))
     plt.title('$nu = 0.1$')
     plt.legend()

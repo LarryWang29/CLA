@@ -14,7 +14,7 @@ def Error_N(N, k):
     :param N: Size of the matrix
     :k: Number of iterations
 
-    :returns Avg_Error: Average of relative error after k iterations
+    :returns average error: Average of relative error after k iterations
     """
     Growth_factor = []
     for i in range(k):
@@ -22,17 +22,16 @@ def Error_N(N, k):
         random.seed(random.randint(1, 1000))
         # Generate n*n matrix following uniform distribution on [-1/n, 1/n]
         A = random.uniform(-1/N, 1/N, (N,N))
-        # Get maximum of a_ij
+        # Get maximum of abs(a_ij)
         a = np.amax(np.abs(A))
         A1 = np.copy(A)
         cla_utils.LUP_inplace(A1)
         U = np.triu(A1)
-        # Get maximum of u_ij
+        # Get maximum of abs(u_ij)
         u = np.amax(np.abs(U))
         Growth_factor.append(u/a)
     return np.mean(Growth_factor)
 
-# Generate the array x_arr = (5, 10 ... 95, 100)
 x_arr = np.linspace(10, 1000, 50, dtype='int32')
 Err_arr = []
 # Calculate the average relative error for each element in x_arr

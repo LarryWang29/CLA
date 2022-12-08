@@ -17,14 +17,17 @@ def Get_Error2(A):
     N = np.shape(A)[1]
     Error, Error1 = [], []
     for i in range(100):
+        # Generate x_star and b
         x_star = np.random.random(N)
         b = A @ x_star
         A1 = np.copy(A)
+        # Calculate errors of each method
         x_hat = Q2.MGS_solve_ls_modified(A1, b)
         Error.append(np.linalg.norm(x_star - x_hat))
         x_hat1 = Q2.MGS_solve_ls(A1, b)
         Error1.append(np.linalg.norm(x_star - x_hat1))
     x_arr = np.linspace(1, 100, 100)
+    # Plots the data
     plt.plot(x_arr, np.log10(Error1), label='MGS without augmented A')
     plt.plot(x_arr, np.log10(Error), label='MGS with augmented A')
     plt.xlabel("Iteration index")

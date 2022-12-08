@@ -62,7 +62,7 @@ def sim(N, s, option, t=False):
         raise NotImplementedError("Use valid option")
     u = np.reshape(u_hat, (N, N))
     if t:
-        # Return time if time=True
+        # Return runtime of solver if t=True
         return T2 - T1
     # else plots the heatmap
     plt.imshow(u, cmap='gray', vmin=-1, vmax=1)
@@ -83,7 +83,7 @@ def matvec_prod_banded(A, b, bandwidth):
     m = len(b)
     y = np.zeros(m)
     for i in range(m):
-        # finding indices i and j to perform inner product on
+        # finding indices i and j used for slicing
         j = min(i+bandwidth+1, m)
         k = max(0, i-bandwidth)
         y[i] = np.dot(A[i,k:j], b[k:j])
