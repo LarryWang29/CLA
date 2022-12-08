@@ -10,10 +10,8 @@ def test_MGS_ls(m, n):
     A = random.randn(m, n)
     b = random.randn(m)
     A0 = np.copy(A)
-
+    # Apply MGS solve ls to A0
     x = Q2.MGS_solve_ls(A0, b)
-    #!!!change test param to b
-
     #check normal equation residual
     assert(np.linalg.norm(np.dot(A.T, np.dot(A, x) - b)) < 1.0e-6)
 
@@ -23,9 +21,7 @@ def test_modified_MGS_ls(m, n):
     A = random.randn(m, n)
     b = random.randn(m)
     A0 = np.copy(A)
-
+    # Apply Modified MGS solve ls to A0
     x = Q2.MGS_solve_ls_modified(A0, b)
-    #!!!change test param to b
-
     #check normal equation residual
     assert(np.linalg.norm(np.dot(A.T, np.dot(A, x) - b)) < 1.0e-6)
