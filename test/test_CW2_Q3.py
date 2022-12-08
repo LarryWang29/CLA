@@ -2,6 +2,7 @@ import numpy as np
 from numpy import random
 import cla_utils
 import pytest
+from cw2 import Q3
 
 @pytest.mark.parametrize('m', [20, 204, 18])
 def test_LU_inplace(m):
@@ -70,3 +71,12 @@ def test_LU_solve_doubly_banded(m):
     x1 = cla_utils.solve_LU(A1, b, n, p)
     #check normal equation residual
     assert(np.linalg.norm(x1-x)) < 1.0e-6
+
+@pytest.mark.parametrize('m', [5, 15, 20])
+def test_LU_solve_doubly_banded(m):
+    random.seed(84124*m)
+    # Generate D
+    D = Q3.Mat_D(m, 1)
+    u_hat, iter, w = Q3.iterative_solver(m, 1, 1, 1, 1e-06, True)
+    #check that u_hat satisfies the stopping condition
+    assert(np.linalg.norm(D@u_hat-w)) < 1.0e-6 * np.linalg.norm(w)
