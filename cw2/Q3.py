@@ -47,34 +47,28 @@ def sim(N, s, option, t=False):
     # Choose option for solver
     if option=='Banded':
         # Getting start and finish times of the function
-        if time:
+        if t:
             T1 = time.time()
         u_hat = cla_utils.solve_LU(D, w, N+1, N+1)
-        if time:
+        if t:
             T2 = time.time()
     elif option=='Original':
-        if time:
+        if t:
             T1 = time.time()
         u_hat = cla_utils.solve_LU(D, w)
-        if time:
+        if t:
             T2 = time.time()
     else:
         raise NotImplementedError("Use valid option")
     u = np.reshape(u_hat, (N, N))
-    if time:
+    if t:
         # Return time if time=True
         return T2 - T1
-    # plt.imshow(u, cmap='gray', vmin=-1, vmax=1)
-    # plt.colorbar()
+    # else plots the heatmap
+    plt.imshow(u, cmap='gray', vmin=-1, vmax=1)
+    plt.show()
 
-# x_arr = np.linspace(2, 40, 20, dtype='int32')
-# y_arr, y_arr1 = [], []
-# for i in x_arr:
-#     y_arr.append(sim(i, 1, 'Banded', True))
-#     y_arr1.append(sim(i, 1, 'Original', True))
-# plt.plot(x_arr, y_arr)
-# plt.plot(x_arr, y_arr1)
-# plt.show()
+
 
 def matvec_prod_banded(A, b, bandwidth):
     """
@@ -151,30 +145,3 @@ def iterative_solver(N, s, rho, v, tol, test=False):
     if test:
         return u_hat, iter1, w
     return u_hat, iter1
-
-# fig = plt.figure(figsize=(10, 5))
-# fig.suptitle('Simulated U-array with $N=50$ and varying values of $s$')
-# ax1 = plt.subplot(1, 2, 1)
-# sim(50, 0.01, 'Banded')
-# plt.title("$s=0.01$")
-
-# ax2 = plt.subplot(1, 2, 2)
-# sim(50, 0.25, 'Banded')
-# plt.title("$s=0.25$")
-
-# ax1 = plt.subplot(1, 2, 1)
-# sim(50, 0.5, 'Banded')
-# plt.title("$s=0.5$")
-
-# ax2 = plt.subplot(1, 2, 2)
-# sim(50, 1, 'Banded')
-# plt.title("$s=1$")
-
-# ax2 = plt.subplot(1, 2, 1)
-# sim(50, 2.5, 'Banded')
-# plt.title("$s=2.5$")
-
-# ax3 = plt.subplot(1, 2, 2)
-# sim(50, 25, 'Banded')
-# plt.title("$s=25$")
-# plt.show()

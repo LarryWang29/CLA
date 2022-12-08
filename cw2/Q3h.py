@@ -12,13 +12,22 @@ LN = len(N)
 
 
 def fix_nu(nu):
+    """
+    Calculate iteration counts for different rho and N values while keeping 
+    nu fixed
+
+    :param nu: nu value to fix
+
+    :returns: a list of lists. Each list consists of iteration counts for 
+    different rho values while keeping N fixed
+    """
     iter_lists = [[] for _ in range(LN)]
     for i in rho:
         for j in range(LN):
             iter_lists[j].append(Q3.iterative_solver(N[j], 1, i, nu, 1.0e-6)[1])
     return iter_lists
 
-
+# Plotting two plots side by side 
 fig = plt.figure(figsize=(10, 5))
 
 # ax1 = plt.subplot(1, 2, 1)

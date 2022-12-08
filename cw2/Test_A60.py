@@ -4,26 +4,37 @@ from numpy import random
 import matplotlib.pyplot as plt
 
 def An(n):
+    """
+    Generates the n*n matrix An as described by the question
+
+    :param n: dimension of the matrix 
+
+    :return A: the required matrix
+    """
+    # setting lower triangular part
     A = -1 * np.tri(n) + 2 * np.eye(n)
     A[:,-1] = np.ones(n)
-    cla_utils.LUP_inplace(A)
-    L = np.eye(n)
-    i1 = np.tril_indices(n, k=-1)
-    L[i1] = A[i1]
-    U = np.triu(A)
     return A
 
-print(An(6))
+# LUP on A6 (for part a)
+A6 = An(6)
+cla_utils.LUP_inplace(A6)
+print(A6)
+
+# Calculates the error of LUP in place
 n = 60
 B = -1 * np.tri(n, dtype=np.float64) + 2 * np.eye(n,dtype=np.float64)
 B[:,-1] = np.ones(60,dtype=np.float64)
 A60 = An(n)
+cla_utils.LUP_inplace(A60)
 L = np.eye(n)
 i1 = np.tril_indices(n, k=-1)
+# Getting lower triangular and upper triangular entries
 L[i1] = A60[i1]
 U = np.triu(A60)
 print(np.linalg.norm(B - L @ U) / np.linalg.norm(B))
 
+# Calculates the error of solve LUP
 Error_array = []
 for i in range(20):
     # Set a random seed 
