@@ -1,6 +1,5 @@
 import numpy as np
 import cla_utils
-import time
 import matplotlib.pyplot as plt
 
 A2 = np.loadtxt('A2.dat')

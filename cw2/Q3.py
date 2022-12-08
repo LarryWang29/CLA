@@ -17,10 +17,13 @@ def Mat_D(N, s):
     s2 = s ** 2
     # Generate Diagonal entries 
     D = np.eye(N2) * (1 + 4 * s2)
+    # Generate superdiagonal and subdiagonal entries
     sn1 = -s2 * np.ones(N2-1)
     D += np.diag(sn1, 1) + np.diag(sn1, -1)
+    # Generate nth diagonal entries
     sn2 = -s2 * np.ones(N2-N)
     D += np.diag(sn2, N) + np.diag(sn2, -N)
+    # Setting specific entries on superdiagonal and subdiagonal to 0
     for i in range(1,N):
         D[i*N, i*N-1] = 0
         D[i*N-1, i*N] = 0
@@ -38,20 +41,28 @@ def sim(N, s, option, t=False):
     :param t: if True, returns the runtime of solver
     """
     N2 = N ** 2
-    w = np.random.randn(N2)
+    w = random.randn(N2)
+    # Generate D
     D = Mat_D(N,s)
+    # Choose option for solver
     if option=='Banded':
-        T1 = time.time()
+        # Getting start and finish times of the function
+        if time:
+            T1 = time.time()
         u_hat = cla_utils.solve_LU(D, w, N+1, N+1)
-        T2 = time.time()
+        if time:
+            T2 = time.time()
     elif option=='Original':
-        T1 = time.time()
+        if time:
+            T1 = time.time()
         u_hat = cla_utils.solve_LU(D, w)
-        T2 = time.time()
+        if time:
+            T2 = time.time()
     else:
         raise NotImplementedError("Use valid option")
     u = np.reshape(u_hat, (N, N))
     if time:
+        # Return time if time=True
         return T2 - T1
     # plt.imshow(u, cmap='gray', vmin=-1, vmax=1)
     # plt.colorbar()
@@ -78,6 +89,7 @@ def matvec_prod_banded(A, b, bandwidth):
     m = len(b)
     y = np.zeros(m)
     for i in range(m):
+        # finding indices i and j to perform inner product on
         j = min(i+bandwidth+1, m)
         k = max(0, i-bandwidth)
         y[i] = np.dot(A[i,k:j], b[k:j])
@@ -99,7 +111,7 @@ def iterative_solver(N, s, rho, v, tol, test=False):
     :return w: Returns w to use for testing
     """
     N2 = N ** 2
-    w = np.random.randn(N2)
+    w = random.randn(N2)
     u_hat = np.zeros(N2)
     D = Mat_D(N,s)
     # Creating the modified block tridiagonal matrix A1 and the tridiagonal matrix A2
