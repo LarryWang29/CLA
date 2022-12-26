@@ -1,6 +1,6 @@
 import numpy as np
 import numpy.random as random
-
+import cla_utils
 
 def arnoldi(A, b, k):
     """
@@ -15,9 +15,17 @@ def arnoldi(A, b, k):
     :return H: a (k+1)xk dimensional numpy array containing the upper \
     Hessenberg matrix
     """
-
-    raise NotImplementedError
-
+    m = np.shape(A)[0]
+    Q = np.zeros((m, k+1), dtype=b.dtype)
+    H = np.zeros((k+1, k), dtype=b.dtype)
+    Q[:,0] = b / np.linalg.norm(b)
+    for i in range(k):
+        v = A @ Q[:,i]
+        H[:i+1, i] = np.ndarray.flatten(np.inner(np.conj(Q[:,:i+1].T), np.array([v])))
+        v -= np.sum((H[:i+1, i] * Q[:,:i+1]), axis=1)
+        H[i+1, i] = np.linalg.norm(v)
+        Q[:,i+1] = v / np.linalg.norm(v)
+    return Q, H
 
 def GMRES(A, b, maxit, tol, x0=None, return_residual_norms=False,
           return_residuals=False):

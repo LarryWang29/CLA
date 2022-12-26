@@ -213,7 +213,6 @@ def rq_it(A, x0, tol, maxit, store_iterations = False):
         if np.linalg.norm(r) < tol:
             break
     
-    print(iter)
     return x0, lambda0
 
 
@@ -227,9 +226,17 @@ def pure_QR(A, maxit, tol):
 
     :return Ak: the result
     """
+    Ak = A
+    count = 0
+    while count < maxit:
+        Q, R = cla_utils.householder_qr(Ak)
+        Ak_star = R @ Q
+        count += 1
+        if np.linalg.norm(Ak_star - Ak) < tol:
+            break
+        Ak = Ak_star
 
-    raise NotImplementedError
-
+    return Ak
 
 # print(pow_it(get_A3(), np.ones(3), 0.001, 10000, True))
 # print(pow_it(get_B3(), np.ones(3), 0.001, 10000))
