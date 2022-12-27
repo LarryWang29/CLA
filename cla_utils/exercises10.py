@@ -48,11 +48,47 @@ def GMRES(A, b, maxit, tol, x0=None, return_residual_norms=False,
     :return r: mxnits dimensional numpy array, column k contains residual \
     at iteration k
     """
-
+    nits = 0
+    m = np.shape(A)[0]
+    Q = np.zeros((m, 2), dtype=b.dtype)
+    H = np.zeros((2, 1), dtype=b.dtype)
+    Q[:,0] = b / np.linalg.norm(b)
     if x0 is None:
         x0 = b
-    
-    raise NotImplementedError
+    e1 = np.zeros(2)
+    if return_residual_norms:
+        rnorms = []
+    if return_residuals:
+        r = np.empty(0)
+    e1[0] = 1
+    while nits < maxit:
+        v = A @ Q[:,nits]
+        H[:nits+1, nits] = np.ndarray.flatten(np.inner(np.conj(Q[:,:nits+1].T), np.array([v])))
+        v -= np.sum((H[:nits+1, nits] * Q[:,:nits+1]), axis=1)
+        H[nits+1, nits] = np.linalg.norm(v)
+        Q[:,nits+1] = v / np.linalg.norm(v)
+        y = cla_utils.householder_ls(H, np.linalg.norm(b) * e1)
+        xn = Q[:,:nits+1] @ np.array(y)
+        Rn = np.linalg.norm(H @ y - np.linalg.norm(b) * e1)
+        if return_residual_norms:
+            rnorms.append(Rn)
+        if return_residuals:
+            r = np.hstack((r, H @ y - np.linalg.norm(b) * e1))
+        nits += 1
+        if Rn < tol:
+            if return_residual_norms and return_residuals:
+                return xn, nits, rnorms, r
+            elif return_residual_norms:
+                return xn, nits, rnorms
+            elif return_residuals:
+                return xn, nits, r
+            else:
+                return xn, nits
+        H = np.c_[H, np.zeros(nits+1)]
+        H = np.r_[H, np.array([np.zeros(nits+1)])]
+        Q = np.c_[Q, np.zeros(m)]
+        e1 = np.insert(e1, nits+1, 0)
+    return xn, -1
 
 
 def get_AA100():
