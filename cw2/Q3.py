@@ -132,7 +132,7 @@ def iterative_solver(N, s, rho, v, tol, test=False):
         v1 = v1[perm]
         for j in range(N):
             # Solve for u_hat_star block-wise
-            u_hat_star[j*N:(j+1)*N] = np.linalg.solve(A1_block, v1[j*N:(j+1)*N])
+            u_hat_star[j*N:(j+1)*N] = cla_utils.solve_LU(A1_block, v1[j*N:(j+1)*N], 1, 1)
         v2 = np.zeros(N2)
         for k in range(N):
             # Calculate Matrix vector product using banded algorithm
@@ -141,7 +141,7 @@ def iterative_solver(N, s, rho, v, tol, test=False):
         v2 = v2[inv_perm] + w
         for l in range(N):
             # Solve for u_hat block-wise
-            u_hat[l*N:(l+1)*N] = np.linalg.solve(A2_block, v2[l*N:(l+1)*N])
+            u_hat[l*N:(l+1)*N] = cla_utils.solve_LU(A2_block, v2[l*N:(l+1)*N], 1, 1)
         iter1 += 1
     if test:
         return u_hat, iter1, w
