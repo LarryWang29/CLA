@@ -27,6 +27,7 @@ def arnoldi(A, b, k):
         Q[:,i+1] = v / np.linalg.norm(v)
     return Q, H
 
+
 def GMRES(A, b, maxit, tol, x0=None, return_residual_norms=False,
           return_residuals=False):
     """
@@ -59,7 +60,7 @@ def GMRES(A, b, maxit, tol, x0=None, return_residual_norms=False,
     if return_residual_norms:
         rnorms = []
     if return_residuals:
-        r = np.empty(0)
+        r = np.empty((m, 0))
     e1[0] = 1
     while nits < maxit:
         v = A @ Q[:,nits]
@@ -73,7 +74,7 @@ def GMRES(A, b, maxit, tol, x0=None, return_residual_norms=False,
         if return_residual_norms:
             rnorms.append(Rn)
         if return_residuals:
-            r = np.hstack((r, H @ y - np.linalg.norm(b) * e1))
+            r = np.append(r, np.array([A @ xn - b]).T, axis=1)
         nits += 1
         if Rn < tol:
             if return_residual_norms and return_residuals:
