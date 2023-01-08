@@ -1,18 +1,18 @@
 import numpy as np
 import cla_utils
 from numpy import random
+A100 = np.loadtxt('AA100.dat')
+A100 = np.reshape(A100, (100, 100))
 
+b = random.randn(100)
+print(cla_utils.GMRES(A100, b, 1000, 0.001, None, True, False)) # 48 iterations
 
-m = 20
-random.seed(1302*m)
-A = random.randn(m, m) + 1j*random.randn(m, m)
-A = 0.5*(A + np.conj(A).T)
-e, _ = np.linalg.eig(A)
-x0 = random.randn(m) + 0.j
-mu = e[m//2] + random.randn() + 1j*random.randn()
+B100 = np.loadtxt('BB100.dat')
+B100 = np.reshape(B100, (100, 100))
+print(cla_utils.GMRES(B100, b, 1000, 0.001, None, True, False)) # 5 iterations
 
-B = A - mu * np.eye(m)
-w1 = np.linalg.solve(B, x0) 
-w = cla_utils.householder_solve(B, x0)
-print(w1)
-print(w)
+C100 = np.loadtxt('CC100.dat')
+C100 = np.reshape(C100, (100, 100))
+print(cla_utils.GMRES(C100, b, 1000, 0.001, None, True, False)) # 10 iterations
+
+print(np.linalg.matrix_rank(C100))

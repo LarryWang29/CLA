@@ -21,7 +21,7 @@ def arnoldi(A, b, k):
     Q[:,0] = b / np.linalg.norm(b)
     for i in range(k):
         v = A @ Q[:,i]
-        H[:i+1, i] = np.ndarray.flatten(np.inner(np.conj(Q[:,:i+1].T), np.array([v])))
+        H[:i+1, i] = Q[:,:i+1].conj().T @ v
         v -= np.sum((H[:i+1, i] * Q[:,:i+1]), axis=1)
         H[i+1, i] = np.linalg.norm(v)
         Q[:,i+1] = v / np.linalg.norm(v)
@@ -50,8 +50,8 @@ def GMRES(A, b, maxit, tol, x0=None, return_residual_norms=False,
     """
     nits = 0
     m = np.shape(A)[0]
-    Q = np.zeros((m, 2), dtype=b.dtype)
-    H = np.zeros((2, 1), dtype=b.dtype)
+    Q = np.zeros((m, 2), dtype=A.dtype)
+    H = np.zeros((2, 1), dtype=A.dtype)
     Q[:,0] = b / np.linalg.norm(b)
     if x0 is None:
         x0 = b
@@ -63,7 +63,7 @@ def GMRES(A, b, maxit, tol, x0=None, return_residual_norms=False,
     e1[0] = 1
     while nits < maxit:
         v = A @ Q[:,nits]
-        H[:nits+1, nits] = np.ndarray.flatten(np.inner(np.conj(Q[:,:nits+1].T), np.array([v])))
+        H[:nits+1, nits] = Q[:,:nits+1].conj().T @ v
         v -= np.sum((H[:nits+1, nits] * Q[:,:nits+1]), axis=1)
         H[nits+1, nits] = np.linalg.norm(v)
         Q[:,nits+1] = v / np.linalg.norm(v)
@@ -84,10 +84,10 @@ def GMRES(A, b, maxit, tol, x0=None, return_residual_norms=False,
                 return xn, nits, r
             else:
                 return xn, nits
-        H = np.c_[H, np.zeros(nits+1)]
+        H = np.c_[H, np.zeros(nits+1)] # Update the dimensions of H
         H = np.r_[H, np.array([np.zeros(nits+1)])]
-        Q = np.c_[Q, np.zeros(m)]
-        e1 = np.insert(e1, nits+1, 0)
+        Q = np.c_[Q, np.zeros(m)] # Update the dimensions of Q
+        e1 = np.insert(e1, nits+1, 0) # Change dimension of e1 vector
     return xn, -1
 
 
@@ -97,7 +97,7 @@ def get_AA100():
 
     :return A: a 100x100 numpy array used in exercises 10.
     """
-    AA100 = np.fromfile('AA100.dat', sep=' ')
+    AA100 = np.fromfile('AA100.dat', sep=' ', dtype='float64')
     AA100 = AA100.reshape((100, 100))
     return AA100
 
@@ -108,7 +108,7 @@ def get_BB100():
 
     :return B: a 100x100 numpy array used in exercises 10.
     """
-    BB100 = np.fromfile('BB100.dat', sep=' ')
+    BB100 = np.fromfile('BB100.dat', sep=' ', dtype='float64')
     BB100 = BB100.reshape((100, 100))
     return BB100
 

@@ -110,7 +110,6 @@ def pow_it(A, x0, tol, maxit, store_iterations = False):
         x = x0 / np.sqrt(np.dot(x0, x0)) 
     
     while iter < maxit:
-        # prev = np.dot(x, A @ x)
         w = A @ x
         x = w / np.sqrt(np.dot(w, w))
         if store_iterations:
@@ -160,11 +159,7 @@ def inverse_it(A, x0, mu, tol, maxit, store_iterations = False):
     while iter < maxit:
         B = A - mu * np.eye(m)
         w = cla_utils.householder_solve(B, x)
-        # print(np.linalg.norm(x - (A - mu * np.eye(m)) @ w1))
-        # w = np.linalg.solve(A - mu * np.eye(m), x)
-        # print(np.linalg.norm(x - (A - mu * np.eye(m)) @ w1))
         x = w / np.sqrt(np.dot(w, w))
-        # print(np.linalg.norm(x))
         l = np.dot(x, A @ x)
         if store_iterations:
             np.hstack((x0, x))
@@ -201,19 +196,30 @@ def rq_it(A, x0, tol, maxit, store_iterations = False):
     estimate, or if store_iterations, an m dimensional numpy array containing \
     all the iterates.
     """
-    lambda0 = np.dot(x0, A @ x0)
+    x = x0
+    l = np.dot(x0, A @ x0)
     m = np.shape(A)[0]
     iter = 0
+    if store_iterations:
+        x0 = np.array([x0])
+        x0 = np.transpose(x0)
+        lambda_list = [] 
     while iter < maxit:
-        w = np.linalg.inv(A - lambda0 * np.eye(m)) @ x0
-        x0 = w / np.sqrt(np.inner(w, w))
-        lambda0 = np.dot(x0, A @ x0)
-        r = A @ x0 - lambda0 * x0
+        w = np.linalg.inv(A - l * np.eye(m)) @ x
+        x = w / np.sqrt(np.inner(w, w))
+        l = np.dot(x, A @ x)
+        r = A @ x0 - l * x
+        if store_iterations:
+            np.hstack((x0, x))
+            lambda_list.append(l)
         iter += 1
         if np.linalg.norm(r) < tol:
             break
     
-    return x0, lambda0
+    if store_iterations:
+        return x0, np.array(lambda_list)
+    else:
+        return x, l
 
 
 def pure_QR(A, maxit, tol):

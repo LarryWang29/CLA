@@ -45,7 +45,7 @@ def test_rq_it(m):
     assert(np.linalg.norm(r - li*xi) < 1.0e-4)
 
 
-@pytest.mark.parametrize('m', [20, 30, 18])
+@pytest.mark.parametrize('m', [20, 25, 18])
 def test_pure_QR(m):
     random.seed(1302*m)
     A = random.randn(m, m)# + 1j*random.randn(m, m)
