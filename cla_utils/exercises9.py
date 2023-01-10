@@ -220,7 +220,7 @@ def rq_it(A, x0, tol, maxit, store_iterations = False):
         return x, l
 
 
-def pure_QR(A, maxit, tol, store_AS_norm=False, store_Ak_diag=False):
+def pure_QR(A, maxit, tol, store_AS_norm=False, store_Ak_diag=False, non_sym=False):
     """
     For matrix A, apply the QR algorithm and return the result.
 
@@ -246,9 +246,34 @@ def pure_QR(A, maxit, tol, store_AS_norm=False, store_Ak_diag=False):
             diags = np.append(diags, np.array([Ak_diags]).T, axis=1)
         if store_AS_norm:
             AS_norm.append(np.linalg.norm(np.tril(Ak_star, k=-1)))
-        if (np.linalg.norm(Ak_star[np.tril_indices(m, -1)])/m**2 < tol):
-            break
+        if non_sym:
+            Tol_list = []
+            for i in range(m-1):
+                if i != m-2:
+                    if np.abs(Ak_star[i+1, i]) < tol:
+                        Tol_list.append(Ak_star[i+1, i])
+                        continue
+                    else:
+                        if np.abs(Ak_star[i+2,i+1]) < tol:
+                            continue
+                        else:
+                            break
+                else:
+                    if np.abs(Ak_star[i+1, i]) < tol:
+                        Tol_list.append(Ak_star[i+1, i])                         
+                    if np.linalg.norm(Tol_list) < tol:
+                        if store_Ak_diag and store_AS_norm:
+                            return Ak_star, diags, AS_norm
+                        if store_Ak_diag:
+                            return Ak_star, diags
+                        if store_AS_norm:
+                            return Ak_star, AS_norm
+                        return Ak_star
+        else:
+            if (np.linalg.norm(Ak_star[np.tril_indices(m, -1)])/m**2 < tol):
+                break
         Ak = Ak_star
+    print(count)
     if store_Ak_diag and store_AS_norm:
         return Ak_star, diags, AS_norm
     if store_Ak_diag:

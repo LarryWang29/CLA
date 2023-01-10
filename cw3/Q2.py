@@ -4,6 +4,12 @@ import matplotlib.pyplot as plt
 import numpy.random as random
 import Q1efgh
 
+# Part 2(a)
+def get_callback(x_sol):
+    def callback(x):
+        print(np.linalg.norm(x-x_sol)) # Compute error
+    return callback
+
 # Part 2(c)
 def mat_A(m):
     A = -3 * np.eye(m) +  np.triu(np.tri(m, m, k=1), k=-1)
@@ -32,3 +38,5 @@ for i in range(4):
     evalues1 = vfunc(idx)
     ax[i // 2, i % 2].hist(evalues1, bins=15)
 plt.show()
+
+# Part 2(e)

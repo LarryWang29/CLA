@@ -49,15 +49,14 @@ def shifted_QR(A, maxit, tol, store_diags=False):
     while count < maxit and m > 1:
         mu = Ak[m-1,m-1]
         Q, R = cla_utils.householder_qr(Ak[:m, :m] - mu * np.eye(m))
-        Ak_star = R @ Q + mu * np.eye(m)
+        Ak[:m,:m] = R @ Q + mu * np.eye(m)
         count += 1
-        if np.abs(Ak_star[m-2,m-1]) < tol:
-            evalues.append(Ak_star[m-1,m-1])
+        if np.abs(Ak[m-2,m-1]) < tol:
+            evalues.append(Ak[m-1,m-1])
             m -= 1
         if store_diags:
-            Ak_diags = Ak_star.diagonal()
+            Ak_diags = Ak.diagonal()
             diags = np.append(diags, np.array([Ak_diags]).T, axis=1)
-        Ak = Ak_star
     evalues.append(Ak[0,0])
     if store_diags:
         return evalues, diags

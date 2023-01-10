@@ -3,7 +3,9 @@ import numpy as np
 A4 = np.loadtxt('A4.dat')
 
 # Part 1(c)
-A4_dot = cla_utils.pure_QR(A4, 1000, 1.0e-5)
+A4_dot = cla_utils.pure_QR(A4, 1000, 1.0e-5, False, False, True)
+# A4_dot = cla_utils.pure_QR(A4, 1000, 1.0e-5)
+# print(A4_dot - A4_dot1)
 
 # Part 1(d)
 m = np.shape(A4)[0]
@@ -27,5 +29,7 @@ for i in evalues:
 Errors = []
 for i in range(len(evectors)):
     Errors.append(np.linalg.norm(A4 @ evectors[i] - evalues[i]  * evectors[i]))
-print(Errors)
+# print(np.linalg.norm(Errors))
+print(evalues)
+print(np.linalg.eigvals(A4))
 # Part 1(e)

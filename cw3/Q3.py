@@ -17,6 +17,8 @@ def compute_D(A, ret_H = False):
     evals = cla_utils.pure_QR(mu*np.eye(2*m) + H1, 2000, 1.0e-5).diagonal()
     evals = np.sort(evals)
     evals -= mu
+    # print(np.linalg.eigvals(H))
+    # print(evals)
     D = np.diag(evals[-m:][::-1])
     if ret_H:
         return D, H
