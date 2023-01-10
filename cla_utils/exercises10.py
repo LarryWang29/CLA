@@ -29,7 +29,7 @@ def arnoldi(A, b, k):
 
 
 def GMRES(A, b, maxit, tol, x0=None, return_residual_norms=False,
-          return_residuals=False):
+          return_residuals=False, callback=None):
     """
     For a matrix A, solve Ax=b using the basic GMRES algorithm.
 
@@ -70,6 +70,8 @@ def GMRES(A, b, maxit, tol, x0=None, return_residual_norms=False,
         Q[:,nits+1] = v / np.linalg.norm(v)
         y = cla_utils.householder_ls(H, np.linalg.norm(b) * e1)
         xn = Q[:,:nits+1] @ np.array(y)
+        if callback is not None:
+            callback(xn)
         Rn = np.linalg.norm(H @ y - np.linalg.norm(b) * e1)
         if return_residual_norms:
             rnorms.append(Rn)

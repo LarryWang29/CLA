@@ -131,7 +131,6 @@ def inverse_it(A, x0, mu, tol, maxit, store_iterations = False):
     For a Hermitian matrix A, apply the inverse iteration algorithm
     with initial guess x0, using the same termination criteria as
     for pow_it.
-
     :param A: an mxm numpy array
     :param mu: a floating point number, the shift parameter
     :param x0: the starting vector for the power iteration
@@ -140,7 +139,6 @@ def inverse_it(A, x0, mu, tol, maxit, store_iterations = False):
     :param store_iterations: if True, then return the entire sequence \
     of inverse iterates, instead of just the final iteration. Default is \
     False.
-
     :return x: an m dimensional numpy array containing the final iterate, or \
     if store_iterations, an mxmaxit dimensional numpy array containing \
     all the iterates.
@@ -159,7 +157,7 @@ def inverse_it(A, x0, mu, tol, maxit, store_iterations = False):
     while iter < maxit:
         B = A - mu * np.eye(m)
         w = cla_utils.householder_solve(B, x)
-        x = w / np.sqrt(np.dot(w, w))
+        x = w / np.linalg.norm(w)
         l = np.dot(x, A @ x)
         if store_iterations:
             np.hstack((x0, x))
@@ -222,7 +220,7 @@ def rq_it(A, x0, tol, maxit, store_iterations = False):
         return x, l
 
 
-def pure_QR(A, maxit, tol):
+def pure_QR(A, maxit, tol, store_AS_norm=False, store_Ak_diag=False):
     """
     For matrix A, apply the QR algorithm and return the result.
 
@@ -232,17 +230,32 @@ def pure_QR(A, maxit, tol):
 
     :return Ak: the result
     """
+    m = np.shape(A)[0]
     Ak = A
     count = 0
+    if store_AS_norm:
+        AS_norm = []
+    if store_Ak_diag:
+        diags = np.empty((m, 0))
     while count < maxit:
         Q, R = cla_utils.householder_qr(Ak)
         Ak_star = R @ Q
         count += 1
-        if np.linalg.norm(Ak_star - Ak) < tol:
+        if store_Ak_diag:
+            Ak_diags = Ak_star.diagonal()
+            diags = np.append(diags, np.array([Ak_diags]).T, axis=1)
+        if store_AS_norm:
+            AS_norm.append(np.linalg.norm(np.tril(Ak_star, k=-1)))
+        if (np.linalg.norm(Ak_star[np.tril_indices(m, -1)])/m**2 < tol):
             break
         Ak = Ak_star
-
-    return Ak
+    if store_Ak_diag and store_AS_norm:
+        return Ak_star, diags, AS_norm
+    if store_Ak_diag:
+        return Ak_star, diags
+    if store_AS_norm:
+        return Ak_star, AS_norm
+    return Ak_star
 
 # print(pow_it(get_A3(), np.ones(3), 0.001, 10000, True))
 # print(pow_it(get_B3(), np.ones(3), 0.001, 10000))
