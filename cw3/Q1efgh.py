@@ -2,7 +2,7 @@ import cla_utils
 import numpy as np
 import matplotlib.pyplot as plt
 import cw3
-A3 = np.loadtxt('A3.dat')
+# A3 = np.loadtxt('A3.dat')
 
 # Part 1(e)
 def pure_QR_eig(A):
@@ -128,6 +128,6 @@ def shifted_QR(A, maxit, tol, store_diags=False, store_iter=False):
 # evals, iters = shifted_QR(A3, 1000, 1.0e-5, False, True) 
 # print(iters) # Print out number of iterations
 # Calculate eigenvalues using pure QR
-evals1 = cla_utils.pure_QR(A3, 1000, 1.0e-05).diagonal()
+# evals1 = cla_utils.pure_QR(A3, 1000, 1.0e-05).diagonal()
 # Calculate the norm of differences between the eigenvalues
 # print(np.linalg.norm(np.sort(evals) - np.sort(evals1)))

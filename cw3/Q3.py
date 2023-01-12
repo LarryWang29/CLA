@@ -2,30 +2,37 @@ import cla_utils
 import numpy as np
 import matplotlib.pyplot as plt
 import numpy.random as random
-import Q1efgh
+from cw3 import Q1efgh
 import scipy as sp
 
 # Question 3(c)
 def compute_D(A, ret_H = False, rank_def=False):
+    """
+    Computes the matrix D as in the question, given a matrix A
+
+    :param A: the matrix A
+    
+    :return D: the matrix D as described in the question
+    """
     m = np.shape(A)[0]
-    H = np.zeros((2*m, 2*m))
+    H = np.zeros((2*m, 2*m)) # Form the matrix H
     H[m:, :m] = A
     H[:m, m:] = A.T
     H1 = np.copy(H)
-    # evals = Q1efgh.shifted_QR(H1, 2000, 1.0e-5)
     mu = 1
-    # Ak = cla_utils.pure_QR(mu*np.eye(2*m) + H1, 2000, 1.0e-5)
     if rank_def:
         Ak = cla_utils.pure_QR(mu*np.eye(2*m) + H1, 2000, 1.0e-5)
-        # print(Ak)
-        evals = Q1efgh.pure_QR_eig(Ak)
-        # print(evals)
+        evals = np.array(Q1efgh.pure_QR_eig(Ak))
     else:
+        # Calcualte shifted eigenvalues of H
         evals = cla_utils.pure_QR(mu*np.eye(2*m) + H1, 2000, 1.0e-5).diagonal()
-    evals = np.sort(evals)
+    # Reverse the shift
+    evals = np.copy(evals)
     evals -= mu
-    # print(np.linalg.eigvals(H))
-    # print(evals)
+    evals = np.sort(evals)
+    # Sort the eigenvalues  
+
+    # Form D using the eigenvalues from largest to smallest
     D = np.diag(evals[-m:][::-1])
     if ret_H:
         return D, H
@@ -74,7 +81,7 @@ def H_evec(D, H):
     # evecs[n:,5] *= -1
     # print(evecs)
     # print(np.linalg.norm(evecs[n:,n:] + evecs[n:,:n]))
-    print(np.linalg.norm(2 * evecs[n:,n:] @ D @ -evecs[:n,:n].T - B))
+    # print(np.linalg.norm(2 * evecs[n:,n:] @ D @ -evecs[:n,:n].T - B))
     # print(evecs)
     return evecs
 # D, H = compute_D(A, True)
@@ -82,7 +89,6 @@ def H_evec(D, H):
 
 # Question 3(e)
 def min_norm_sol(A, b):
-    mu = 1.0
     m = np.shape(A)[0]
     D, H = compute_D(A, True, True)
     # print(D)
@@ -101,8 +107,8 @@ def min_norm_sol(A, b):
     x = V @ D1 @ U.T @ b
     return x
 
-x1 = min_norm_sol(B, b)
-print(sp.linalg.null_space(B))
-print(b)
-print(B @ x1 - b)
-print(np.dot(x1, sp.linalg.null_space(B)))
+# x1 = min_norm_sol(B, b)
+# print(sp.linalg.null_space(B))
+# print(b)
+# print(B @ x1 - b)
+# print(np.dot(x1, sp.linalg.null_space(B)))
