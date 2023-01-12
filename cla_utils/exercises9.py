@@ -247,22 +247,22 @@ def pure_QR(A, maxit, tol, store_AS_norm=False, store_Ak_diag=False, non_sym=Fal
         if store_AS_norm:
             AS_norm.append(np.linalg.norm(np.tril(Ak_star, k=-1)))
         if non_sym:
-            Tol_list = []
-            for i in range(m-1):
-                if i != m-2:
-                    if np.abs(Ak_star[i+1, i]) < tol:
+            Tol_list = [] # Create list to store specific subdiagonal entries
+            for i in range(m-1): # Iterate through all subdiagonal entries
+                if i != m-2: # Check conditions for all but last entry in the subdiagonal
+                    if np.abs(Ak_star[i+1, i]) < tol: # Check if current entry is zero
                         Tol_list.append(Ak_star[i+1, i])
                         continue
                     else:
-                        if np.abs(Ak_star[i+2,i+1]) < tol:
-                            continue
+                        if np.abs(Ak_star[i+2,i+1]) < tol: # Check if next entry is zero
+                            continue # Continue if next entry is zero
                         else:
-                            break
+                            break # break out of loop if successive entries are non-zero
                 else:
-                    if np.abs(Ak_star[i+1, i]) < tol:
+                    if np.abs(Ak_star[i+1, i]) < tol: # append the last entry; no need to check for next entry
                         Tol_list.append(Ak_star[i+1, i])                         
-                    if np.linalg.norm(Tol_list) < tol:
-                        if store_Ak_diag and store_AS_norm:
+                    if np.linalg.norm(Tol_list) < tol: # Check norm of list consisting of "zero" terms are below tolerance
+                        if store_Ak_diag and store_AS_norm: # Different return options
                             return Ak_star, diags, AS_norm
                         if store_Ak_diag:
                             return Ak_star, diags
@@ -273,7 +273,6 @@ def pure_QR(A, maxit, tol, store_AS_norm=False, store_Ak_diag=False, non_sym=Fal
             if (np.linalg.norm(Ak_star[np.tril_indices(m, -1)])/m**2 < tol):
                 break
         Ak = Ak_star
-    print(count)
     if store_Ak_diag and store_AS_norm:
         return Ak_star, diags, AS_norm
     if store_Ak_diag:
