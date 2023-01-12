@@ -64,7 +64,6 @@ for i in range(4):
     A = mat_A(m)
     b = np.random.randn(m)
     c = A @ b
-    # r0 = np.linalg.norm(A @ b - d)
     cla_utils.GMRES(A, c, 1000, 1.0e-5, callback = get_callback(b))
     Errors = np.loadtxt('cw3/Errors.dat')
     n = len(Errors)

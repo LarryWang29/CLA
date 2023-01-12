@@ -36,6 +36,7 @@ for i in range(11):
         else:
             continue
 
+# Plot to demonstrate convergence rate of Pure QR and Shifted QR 
 plt.title('Iteration counts against size of matrix')
 plt.plot(size, Conv_iter1, label='Pure QR algorithm')
 plt.plot(size, Conv_iter2, label='Shifted QR algorithm')
