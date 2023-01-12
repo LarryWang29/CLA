@@ -42,4 +42,4 @@ def test_Q3e(m):
     x = Q3.min_norm_sol(A, b)
     Q = cla_utils.householder_qr(A.T)[0]
     for i in range(2):
-        assert(np.inner(Q[:,-i], x))
+        assert(np.inner(Q[:,-i], x)) # Check for orthogonality to nullspace
