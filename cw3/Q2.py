@@ -57,7 +57,7 @@ vfunc = np.vectorize(eval_func)
 # # plt.show()
 
 # Part 2(e)
-dims = np.linspace(50, 200, 4, dtype='int32') # Check for large m
+dims = np.array([3, 5, 20, 100]) # Check for large m
 for i in range(len(dims)):
     m = dims[i]
     A = mat_A(m)
@@ -68,5 +68,5 @@ for i in range(len(dims)):
     Errors = np.loadtxt('cw3/Errors.dat')
     n = len(Errors)
     vals = np.linspace(1, n, n)
-    plt.semilogy(vals, Errors+1)
+    plt.plot(vals, Errors)
     plt.show()

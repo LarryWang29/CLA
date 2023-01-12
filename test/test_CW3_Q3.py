@@ -3,7 +3,7 @@ import cla_utils
 from numpy import random
 import numpy as np
 from cw3 import Q3
-from cw3 import Q1efgh
+import scipy as sp
 
 
 @pytest.mark.parametrize('m', [10, 15, 20, 25])
@@ -32,15 +32,15 @@ def test_Q3d(m):
     assert(np.linalg.norm(U @ U.T - np.eye(m)) < 1.0e-3)
     assert(np.linalg.norm(A - U @ D @ V.T) < 1.0e-3) # Check that UDV^T is the same as A
 
-@pytest.mark.parametrize('m', [4])
+@pytest.mark.parametrize('m', [6, 8, 10])
 def test_Q3e(m):
     random.seed(185*m)
     A = random.randn(m,m)
-    n = random.randint(1, m-2)
-    A[:,n] = 1
+    A[m-1,:] = 2 # Set some columns of $A$ to 2
+    A[m-3,:] = 2
+    A[m-5,:] = 2
     b = random.randn(m)
     x = Q3.min_norm_sol(A, b)
-    Q = cla_utils.householder_qr(A)[0]
-    print(A @ Q[:,-1])
-    assert(np.inner(x, Q[:,-1]) < 1.0e-4)
-    assert(np.inner(x, Q[:,-2]) < 1.0e-4)
+    Nsp = sp.linalg.null_space(A) # Obtain the nullspace of A
+    for i in range(np.shape(Nsp)[1]): # Check that the solution is orthogonal to the nullspace
+        assert(np.inner(x, Nsp[:,i]))
