@@ -246,7 +246,7 @@ def pure_QR(A, maxit, tol, store_AS_norm=False, store_Ak_diag=False, non_sym=Fal
             diags = np.append(diags, np.array([Ak_diags]).T, axis=1)
         if store_AS_norm:
             AS_norm.append(np.linalg.norm(np.tril(Ak_star, k=-1)))
-        if non_sym:
+        if non_sym: # For general non symmetric matrices
             Tol_list = [] # Create list to store specific subdiagonal entries
             for i in range(m-1): # Iterate through all subdiagonal entries
                 if i != m-2: # Check conditions for all but last entry in the subdiagonal

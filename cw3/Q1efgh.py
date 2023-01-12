@@ -1,7 +1,8 @@
 import cla_utils
 import numpy as np
 import matplotlib.pyplot as plt
-# A3 = np.loadtxt('A3.dat')
+import cw3
+A3 = np.loadtxt('A3.dat')
 
 # Part 1(e)
 def pure_QR_eig(A):
@@ -51,42 +52,46 @@ def complex_eigvec(A, ev, tol, maxit):
     v = vr + 1j*vi # Obtain complex eigenvectors
     return v
 
-sizes = np.linspace(3, 15, 5, dtype='int32')
-Error_arr = np.zeros(5)
-np.random.seed(1283)
-for i in range(5):
-    n = sizes[i]
-    A = np.random.randn(n, n) # Generate random non-symmetric matrices
-    evals = pure_QR_eig(A) # Apply general pure QR to obtain eigenvalues
-    evectors = np.zeros((n,n), dtype='complex')
-    for p in range(n):
-        ev = evals[p]
-        if np.imag(ev) == 0: # Check if the eigenvector has imaginary componenet
-            evectors[:,p] = cla_utils.inverse_it(A, np.ones(n), ev, 1.0e-5, 1000)[0] # Obtain the eigenvectors
-        else:
-            v = complex_eigvec(A, ev, 1.0e-5, 1000)
-            evectors[:,p] = v # Obtain complex eigenvectors
-    Errors = np.zeros(n)
-    for k in range(n):
-        Errors[k] = np.linalg.norm(A @ evectors[:,k] - evals[k] * evectors[:,k])
-    Error_arr[i] = np.linalg.norm(Errors) # Keep track of error at each iteration
-plt.semilogy(sizes, Error_arr)
-plt.title('Convergence of non-symmetric matrices')
-plt.xlabel('Dimension of the matrix')
-plt.ylabel('Norm of Error array')
-plt.show()
+# sizes = np.linspace(3, 15, 5, dtype='int32')
+# Error_arr = np.zeros(5)
+# np.random.seed(1283)
+# for i in range(5):
+#     n = sizes[i]
+#     A = np.random.randn(n, n) # Generate random non-symmetric matrices
+#     evals = pure_QR_eig(A) # Apply general pure QR to obtain eigenvalues
+#     evectors = np.zeros((n,n), dtype='complex')
+#     for p in range(n):
+#         ev = evals[p]
+#         if np.imag(ev) == 0: # Check if the eigenvector has imaginary componenet
+#             evectors[:,p] = cla_utils.inverse_it(A, np.ones(n), ev, 1.0e-5, 1000)[0] # Obtain the eigenvectors
+#         else:
+#             v = complex_eigvec(A, ev, 1.0e-5, 1000)
+#             evectors[:,p] = v # Obtain complex eigenvectors
+#     Errors = np.zeros(n)
+#     for k in range(n):
+#         Errors[k] = np.linalg.norm(A @ evectors[:,k] - evals[k] * evectors[:,k])
+#     Error_arr[i] = np.linalg.norm(Errors) # Keep track of error at each iteration
+# plt.semilogy(sizes, Error_arr)
+# plt.title('Convergence of non-symmetric matrices')
+# plt.xlabel('Dimension of the matrix')
+# plt.ylabel('Norm of Error array')
+# plt.show()
 
 
 # Part 1(h)
-def shifted_QR(A, maxit, tol, store_diags=False):
+def shifted_QR(A, maxit, tol, store_diags=False, store_iter=False):
     """
     For matrix A, apply the QR algorithm and return the result.
 
     :param A: an mxm numpy array
     :param maxit: the maximum number of iterations
     :param tol: termination tolerance
+    :param store_diags: if True, store the diagonal values of A at each iteration
+    and return them at the end
+    :param store_iter: if True, store the iteration number at which an eigenvalue 
+    converges
 
-    :return Ak: the result
+    :return evalues: a list of the eigenvalues
     """
     Ak = A
     cla_utils.hessenberg(Ak)
@@ -95,19 +100,34 @@ def shifted_QR(A, maxit, tol, store_diags=False):
     m = np.shape(Ak)[0]
     if store_diags:
         diags = np.empty((m, 0))
+    if store_iter:
+        iter_num = []
     while count < maxit and m > 1:
         mu = Ak[m-1,m-1]
         Q, R = cla_utils.householder_qr(Ak[:m, :m] - mu * np.eye(m))
         Ak[:m,:m] = R @ Q + mu * np.eye(m)
         count += 1
-        if np.abs(Ak[m-2,m-1]) < tol:
-            evalues.append(Ak[m-1,m-1])
-            m -= 1
         if store_diags:
             Ak_diags = Ak.diagonal()
             diags = np.append(diags, np.array([Ak_diags]).T, axis=1)
+        if np.abs(Ak[m-2,m-1]) < tol:
+            if store_iter:
+                iter_num.append(count)
+            evalues.append(Ak[m-1,m-1])
+            m -= 1
     evalues.append(Ak[0,0])
+    if store_iter:
+        iter_num.append(count)
+        return evalues, iter_num
     if store_diags:
         return evalues, diags
     return evalues
 
+# Calculate the eigenvalues using shifted QR and keep note of iteration number for convergence 
+# of each eigenvector
+# evals, iters = shifted_QR(A3, 1000, 1.0e-5, False, True) 
+# print(iters) # Print out number of iterations
+# Calculate eigenvalues using pure QR
+evals1 = cla_utils.pure_QR(A3, 1000, 1.0e-05).diagonal()
+# Calculate the norm of differences between the eigenvalues
+# print(np.linalg.norm(np.sort(evals) - np.sort(evals1)))

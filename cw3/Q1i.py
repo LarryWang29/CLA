@@ -6,31 +6,40 @@ from cw3 import Q1efgh
 A4 = np.loadtxt('A4.dat')
 
 # Part 1(i)
-size = 30
-for i in range(1):
-    fig = plt.figure(figsize=(10, 5))
-    A = np.random.randn(size, size)
-    B = 1/2 * A @ A.T
-    A_star, Ak_list = cla_utils.pure_QR(B, 1000, 1.0e-5, False, True)
-    ax1 = plt.subplot(1, 2, 1)
-    Evalues = A_star.diagonal()
-    num = np.shape(Ak_list)[1]
-    iter_num = np.linspace(1, num, num)
-    for j in range(size):
-        Ak_list[j,:] -= Evalues[j]
-        Ak_list[j,:] += 1.0e-17 # Adding a tiny increment to avoid taking log of 0
-        plt.semilogy(iter_num, np.abs((Ak_list[j,:])))
-    ax2 = plt.subplot(1, 2, 2)
-    evalues, Ak_list2 = Q1efgh.shifted_QR(B, 1000, 1.0e-8, True)
-    evalues.reverse()
-    num1 = np.shape(Ak_list2)[1]
-    iter_num1 = np.linspace(1, num1, num1)
-    for k in range(size):
-        Ak_list2[k,:] -= evalues[k]
-        print(Ak_list2)
-        Ak_list2[k,:] += 1.0e-17 # Adding a tiny increment to avoid taking log of 0
-        plt.semilogy(iter_num1, np.abs((Ak_list2[k,:])))
-    plt.show()
+random.seed(91)
+size = np.linspace(50, 100, 11, dtype='int32')
+Conv_iter1 = []
+Conv_iter2 = []
+for i in range(11):
+    A = np.random.randn(size[i], size[i])
+    B = 1/2 * A @ A.T # Generate a symmetric matrix of a given size
+    # Obtain the diagonal entries at each iteration for pure QR
+    Ak_list = cla_utils.pure_QR(B, 1000, 1.0e-5, False, True)[1]
+    its = np.shape(Ak_list)[1]
+    for j in range(its-1):
+        # Compare the magnitude of the differences between diagonal entries
+        # in successive iterations
+        if np.linalg.norm(Ak_list[:,j] - Ak_list[:,j+1]) < 1.0e-3:
+            Conv_iter1.append(j+2)
+            break
+        else:
+            continue
+    # Obtain the diagonal entries at each iteration for shifted QR
+    Ak_list2 = Q1efgh.shifted_QR(B, 1000, 1.0e-5, True)[1]
+    its2 = np.shape(Ak_list2)[1]
+    for k in range(its2-1):
+        # Compare the magnitude of the differences between diagonal entries
+        # in successive iterations
+        if np.linalg.norm(Ak_list2[:,k] - Ak_list2[:,k+1]) < 1.0e-3:
+            Conv_iter2.append(k+2)
+            break
+        else:
+            continue
 
-# Part 1(h)
-print(Q1efgh.shifted_QR(A4, 1000, 1.0e-5))
+plt.title('Iteration counts against size of matrix')
+plt.plot(size, Conv_iter1, label='Pure QR algorithm')
+plt.plot(size, Conv_iter2, label='Shifted QR algorithm')
+plt.xlabel('Dimension of the matrix')
+plt.ylabel('Iteration counts')
+plt.legend()
+plt.show()
