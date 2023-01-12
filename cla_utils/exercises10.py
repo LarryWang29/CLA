@@ -49,6 +49,9 @@ def GMRES(A, b, maxit, tol, x0=None, return_residual_norms=False,
     :return r: mxnits dimensional numpy array, column k contains residual \
     at iteration k
     """
+    if callback:
+        file = open('cw3/Errors.dat', 'w')
+        file.close() # Clear current contents in the file
     nits = 0
     m = np.shape(A)[0]
     Q = np.zeros((m, 2), dtype=A.dtype)

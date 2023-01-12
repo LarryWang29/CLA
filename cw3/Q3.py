@@ -32,83 +32,52 @@ def compute_D(A, ret_H = False, rank_def=False):
     evals = np.sort(evals)
     # Sort the eigenvalues  
 
-    # Form D using the eigenvalues from largest to smallest
+    # Form D using the eigenvalues, ordered from largest to smallest
     D = np.diag(evals[-m:][::-1])
     if ret_H:
         return D, H
     return D
 
-A = np.random.randn(6, 6)
-
-B = np.random.randn(4, 4)
-B[1,:] = B[0,:]
-B[2,:] = B[1,:]
-b = np.random.randn(4)
-
-# D = compute_D(A)
-# print(D)
-# print(np.linalg.eigvals(D))
-# A = np.random.randn(5, 5)
-# print(np.linalg.eigvals(-A @ A.T))
-# print(cla_utils.pure_QR(-A @ A.T, 1000, 1.0e-5).diagonal())
-
 # Question 3(d)
 def H_evec(D, H):
-    evals = D.diagonal()
-    evals = np.append(evals, -evals)
+    """
+    Computes the eigenvectors of the matrix H
+
+    :param D: matrix D from the eigendecomposition of H
+    :param H: matrix H as described in the question
+
+    :return evecs: returns a matrix whose columns are eigenvectors of H
+    """
+    evals = D.diagonal() # Extract the positive eigenvalues of H from D
+    evals = np.append(evals, -evals) # Add on their negative counterparts
     m = np.shape(H)[0]
     n = np.shape(D)[0]
-    evecs = np.empty((m,0))
+    evecs = np.empty((m,0)) # Create array to store eigenvectors
     H1 = np.copy(H)
-    # if rank_def:
-        # evals += 1.0e-15
     for i in evals:
+        # Apply inverse iteration to the eigenvalues
         evec = cla_utils.inverse_it(H1, 1.2 * np.ones(m), i, 1.0e-5, 1000)[0]
         evecs = np.append(evecs, np.array([evec]).T, axis=1)
-    # if rank_def:
-        # evals -= 1.0e-15
-    # for k in range(m):
-    #     print(np.linalg.norm(H1 @ evecs[:,k] - (evals[k]) * evecs[:,k]))
-    # print(evecs[:,2], evecs[:,5])
     for i in range(n):
+        # Make sure signs of obtained eigenvectors are correct
         if np.abs(evecs[0,i] - evecs[0,i+n]) <= 1.0e-03:
             continue
         else:
-            # print(evecs)
-            # print(np.abs(evecs[0,i] - evecs[0,i+n]))
             evecs[:,i+n] *= -1
-    # print(np.linalg.norm(evecs[:n,:n] - evecs[:n,n:]))
-    # evecs[n:,5] *= -1
-    # print(evecs)
-    # print(np.linalg.norm(evecs[n:,n:] + evecs[n:,:n]))
-    # print(np.linalg.norm(2 * evecs[n:,n:] @ D @ -evecs[:n,:n].T - B))
-    # print(evecs)
     return evecs
-# D, H = compute_D(A, True)
-# H_evec(D, H)
 
 # Question 3(e)
 def min_norm_sol(A, b):
     m = np.shape(A)[0]
     D, H = compute_D(A, True, True)
-    # print(D)
-    # D += np.eye(m) * mu
-    # H += np.eye(2*m) * mu
-    H1 = H_evec(D, H)
-    # D -= np.eye(m) * mu
-    # H -= np.eye(2*m) * mu
-    V = H1[:m,:m] * np.sqrt(2)
+    H1 = H_evec(D, H) # Obtain the unitary matrix from eigendecomposition of H
+    V = H1[:m,:m] * np.sqrt(2) # Extract V and U from H1
     U = H1[m:,:m] * np.sqrt(2)
     D1 = np.zeros((m,m), dtype='complex')
+    # Compute the pseudoinverse of D
     for i in range(m):
         if D[i,i] > 1.0e-6:
             D1[i,i] = 1 / D[i,i]
-    # x = V[:,:2] @ D1[:2,:2] @ U[:,:2].T @ b
+    # Compute the minimum norm solution
     x = V @ D1 @ U.T @ b
     return x
-
-# x1 = min_norm_sol(B, b)
-# print(sp.linalg.null_space(B))
-# print(b)
-# print(B @ x1 - b)
-# print(np.dot(x1, sp.linalg.null_space(B)))

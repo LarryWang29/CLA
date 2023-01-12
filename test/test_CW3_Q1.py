@@ -20,18 +20,10 @@ def test_Q1e(m):
     evecs = np.zeros((m,m), dtype='complex')
     for i in range(m):
         ev = evals[i]
-        if np.imag(ev) == 0:
+        if np.imag(ev) == 0: # Check if complex
             evecs[:, i] = cla_utils.inverse_it(A, np.ones(m), ev, 1.0e-5, 1000)[0]
         else:
-            mur, mui = np.real(ev), np.imag(ev)
-            K = np.zeros((2*m, 2*m)) # Construct the matrix B accordingly
-            K[:m,m:] = mui * np.eye(m)
-            K[m:,:m] = -mui * np.eye(m)
-            K[m:,m:] = A
-            K[:m,:m] = A
-            v_dot = cla_utils.inverse_it(K, np.ones(2*m), mur, 1.0e-5, 1000)[0] # Calculate auxilary vector
-            vr, vi = v_dot[:m], v_dot[m:] # Extract corresponding parts to retrieve eigenvector
-            evecs[:,i] = vr + 1j*vi # Obtain complex eigenvectors
+            Q1efgh.complex_eigvec(A, ev, 1.0e-5, 1000)
     Errors = np.zeros(m)
     for i in range(m):
         Errors[i] = np.linalg.norm(A @ evecs[:,i] - evals[i] * evecs[:,i])

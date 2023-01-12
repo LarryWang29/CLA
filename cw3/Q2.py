@@ -2,12 +2,16 @@ import cla_utils
 import numpy as np
 import matplotlib.pyplot as plt
 import numpy.random as random
-import Q1efgh
+from cw3 import Q1efgh
 
 # Part 2(a)
 def get_callback(x_sol):
     def callback(x):
-        print(np.linalg.norm(x-x_sol)) # Compute error
+        error = np.linalg.norm(x-x_sol) # Compute error
+        file = open('cw3/Errors.dat', 'a')
+        file.write(str(error))
+        file.write('\n')
+        file.close
     return callback
 
 # Part 2(c)
@@ -42,14 +46,27 @@ vfunc = np.vectorize(eval_func)
 
 
 # Part 2(d)
-fig, ax = plt.subplots(nrows=2, ncols=2)
-sizes2 = np.array([50, 100, 150, 200])
-for i in range(4):
-    m = sizes2[i]
-    idx = np.linspace(1, m, m) * (np.pi/(m+1))
-    evalues1 = vfunc(idx)
-    ax[i // 2, i % 2].hist(evalues1, bins=20)
-    ax[i // 2, i % 2].set_title("m = {}".format(m))
-plt.show()
+# fig, ax = plt.subplots(nrows=2, ncols=2)
+# sizes2 = np.array([50, 100, 150, 200])
+# for i in range(4):
+#     m = sizes2[i]
+#     idx = np.linspace(1, m, m) * (np.pi/(m+1))
+#     evalues1 = vfunc(idx)
+#     ax[i // 2, i % 2].hist(evalues1, bins=20)
+#     ax[i // 2, i % 2].set_title("m = {}".format(m))
+# # plt.show()
 
 # Part 2(e)
+dims = np.linspace(50, 200, 4, dtype='int32') # Check for large m
+for i in range(len(dims)):
+    m = dims[i]
+    A = mat_A(m)
+    b = np.random.randn(m)
+    c = A @ b
+    # r0 = np.linalg.norm(A @ b - d)
+    cla_utils.GMRES(A, c, 1000, 1.0e-5, callback = get_callback(b))
+    Errors = np.loadtxt('cw3/Errors.dat')
+    n = len(Errors)
+    vals = np.linspace(1, n, n)
+    plt.semilogy(vals, Errors+1)
+    plt.show()
