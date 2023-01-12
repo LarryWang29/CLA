@@ -20,7 +20,7 @@ for i in range(11):
         # Compare the magnitude of the differences between diagonal entries
         # in successive iterations
         if np.linalg.norm(Ak_list[:,j] - Ak_list[:,j+1]) < 1.0e-3:
-            Conv_iter1.append(j+2)
+            Conv_iter1.append(j+2) # Adding 2 because we are comparing with the next iteration
             break
         else:
             continue

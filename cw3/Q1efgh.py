@@ -2,7 +2,7 @@ import cla_utils
 import numpy as np
 import matplotlib.pyplot as plt
 import cw3
-# A3 = np.loadtxt('A3.dat')
+A3 = np.loadtxt('A3.dat')
 
 # Part 1(e)
 def pure_QR_eig(A):
@@ -30,6 +30,7 @@ def pure_QR_eig(A):
                 evalues.append(A_dot[i,i])
     return evalues
 
+# Demonstrating that the function above works
 A = np.array([[3, 0, 0], [0, 1, -1], [0, 5, -1]])
 C = np.random.randn(3,3)
 Q = cla_utils.householder_qr(C)[0]
@@ -37,6 +38,7 @@ B = Q @ A @ Q.T
 evals = np.sort(pure_QR_eig(B))
 print(evals)
 
+# Demonstrating that the function above works
 D = np.array([[2, 0, 0, 0, 0, 0], 
 [0, 3, -3, 0, 0, 0], [0, 6, -3, 0, 0, 0],
 [0, 0, 0, 7, 0, 0], [0, 0, 0, 0, 1, 1],
@@ -61,16 +63,19 @@ def shifted_QR(A, maxit, tol, store_diags=False, store_iter=False):
     converges
 
     :return evalues: a list of the eigenvalues
+    :return diags: array of diagonal entries at iteration
+    :return iter_num: list that stores the iteration number at which an eigenvalue
+    converges
     """
     Ak = A
-    cla_utils.hessenberg(Ak)
+    cla_utils.hessenberg(Ak) # Apply Hessenberg
     count = 0
-    evalues = []
+    evalues = [] # Create list to store eigenvalues
     m = np.shape(Ak)[0]
     if store_diags:
-        diags = np.empty((m, 0))
+        diags = np.empty((m, 0)) # create array to store diagnal entries at each iteration
     if store_iter:
-        iter_num = []
+        iter_num = [] # creating list to store the iteration number at which an eigenvalue converges 
     while count < maxit and m > 1:
         mu = Ak[m-1,m-1]
         Q, R = cla_utils.householder_qr(Ak[:m, :m] - mu * np.eye(m))
@@ -84,14 +89,15 @@ def shifted_QR(A, maxit, tol, store_diags=False, store_iter=False):
                 iter_num.append(count)
             evalues.append(Ak[m-1,m-1])
             m -= 1
-    evalues.append(Ak[0,0])
+    evalues.append(Ak[0,0]) # Break out when submatrix is 1 by 1
     if store_iter:
-        iter_num.append(count)
+        iter_num.append(count) # Append iteration number for the last eigenvalue
         return evalues, iter_num
     if store_diags:
         return evalues, diags
     return evalues
 
+# Demonstrate that the above function works for A3
 # Calculate the eigenvalues using shifted QR and keep note of iteration number for convergence 
 # of each eigenvector
 evals, iters = shifted_QR(A3, 1000, 1.0e-5, False, True) 

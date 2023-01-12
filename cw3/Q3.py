@@ -2,7 +2,7 @@ import cla_utils
 import numpy as np
 import matplotlib.pyplot as plt
 import numpy.random as random
-# from cw3 import Q1efgh
+from cw3 import Q1efgh
 import scipy as sp
 
 # Question 3(c)
@@ -88,6 +88,14 @@ def H_evec(D, H):
 
 # Question 3(e)
 def min_norm_sol(A, b):
+    """
+    Computes the minimal norm solution, given a matrix A and a vector b
+
+    :param A: matrix in the system
+    :param b: vector in the system
+
+    :return x: the minimal norm solution
+    """
     m = np.shape(A)[0]
     D, H = compute_D(A, True, True)
     H1 = H_evec(D, H) # Obtain the unitary matrix from eigendecomposition of H

@@ -36,7 +36,7 @@ def test_Q3d(m):
 def test_Q3e(m):
     random.seed(185*m)
     A = random.randn(m,m)
-    A[m-1,:] = 2 # Set some columns of $A$ to 2
+    A[m-1,:] = 2 # Set some columns of A to 2
     A[m-3,:] = 2
     A[m-5,:] = 2
     b = random.randn(m)
