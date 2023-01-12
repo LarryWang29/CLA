@@ -3,7 +3,6 @@ import cla_utils
 from numpy import random
 import numpy as np
 from cw3 import Q3
-import scipy as sp
 
 
 @pytest.mark.parametrize('m', [10, 15, 20, 25])
@@ -41,6 +40,6 @@ def test_Q3e(m):
     A[m-5,:] = 2
     b = random.randn(m)
     x = Q3.min_norm_sol(A, b)
-    Nsp = sp.linalg.null_space(A) # Obtain the nullspace of A
-    for i in range(np.shape(Nsp)[1]): # Check that the solution is orthogonal to the nullspace
-        assert(np.inner(x, Nsp[:,i]))
+    Q = cla_utils.householder_qr(A.T)[0]
+    for i in range(2):
+        assert(np.inner(Q[:,-i], x))

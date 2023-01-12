@@ -57,8 +57,9 @@ for i in range(4):
 plt.show()
 
 # Part 2(e)
-dims = np.array([3, 5, 20, 100]) # Check for large m
-for i in range(len(dims)):
+fig, ax = plt.subplots(nrows=2, ncols=2)
+dims = np.array([50, 100, 150, 200]) # Check for large m
+for i in range(4):
     m = dims[i]
     A = mat_A(m)
     b = np.random.randn(m)
@@ -68,5 +69,9 @@ for i in range(len(dims)):
     Errors = np.loadtxt('cw3/Errors.dat')
     n = len(Errors)
     vals = np.linspace(1, n, n)
-    plt.plot(vals, Errors)
-    plt.show()
+    ax[i // 2, i % 2].plot(vals, Errors)
+    ax[i // 2, i % 2].set_title('Plot of $R_{n}$ against iteration index, ' + "m = {}".format(m))
+    ax[i // 2, i % 2].set_xlabel('Iteration index')
+    ax[i // 2, i % 2].set_ylabel('Magnitude of Residual')
+plt.tight_layout()
+plt.show()
