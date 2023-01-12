@@ -2,7 +2,7 @@ import cla_utils
 import numpy as np
 import matplotlib.pyplot as plt
 import numpy.random as random
-from cw3 import Q1efgh
+# from cw3 import Q1efgh
 import scipy as sp
 
 # Question 3(c)
@@ -37,6 +37,26 @@ def compute_D(A, ret_H = False, rank_def=False):
     if ret_H:
         return D, H
     return D
+
+# Demonstrating on some example matrices
+Errors = np.zeros(10)
+for i in range(10):
+    A1 = np.random.randn(8, 8)
+    U = cla_utils.householder_qr(A1)[0] # Generate an unitary matrix
+    A2 = np.random.randn(8, 8)
+    V = cla_utils.householder_qr(A2)[0] # Get another unitary matrix
+    eigvals = np.abs(random.randn(8)) # Generate positive numbers as eigenvalues
+    eigvals = np.sort(eigvals)[::-1] # Sort the eigenvalues
+    D = np.diag(eigvals)
+    A = U @ D @ V.T
+    D1 = compute_D(A)
+    Errors[i] = np.linalg.norm(D1 - D)
+plt.semilogy(np.linspace(1, 10, 10), Errors)
+plt.title('Plot of ||D1 - D|| against iteration index')
+plt.xlabel('Iteration index')
+plt.ylabel('$||D1 - D||$')
+plt.show()
+
 
 # Question 3(d)
 def H_evec(D, H):
