@@ -3,7 +3,6 @@ import numpy as np
 import matplotlib.pyplot as plt
 import numpy.random as random
 from cw3 import Q1efgh
-import scipy as sp
 
 # Question 3(c)
 def compute_D(A, ret_H = False, rank_def=False):
@@ -51,6 +50,7 @@ for i in range(10):
     A = U @ D @ V.T
     D1 = compute_D(A)
     Errors[i] = np.linalg.norm(D1 - D)
+# Plot of matrix norm for differences between D1 and D
 plt.semilogy(np.linspace(1, 10, 10), Errors)
 plt.title('Plot of ||D1 - D|| against iteration index')
 plt.xlabel('Iteration index')

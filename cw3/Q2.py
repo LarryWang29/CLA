@@ -1,7 +1,6 @@
 import cla_utils
 import numpy as np
 import matplotlib.pyplot as plt
-import numpy.random as random
 from cw3 import Q1efgh
 
 # Part 2(a)

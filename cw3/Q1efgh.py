@@ -1,7 +1,5 @@
 import cla_utils
 import numpy as np
-import matplotlib.pyplot as plt
-import cw3
 A3 = np.loadtxt('A3.dat')
 
 # Part 1(e)
